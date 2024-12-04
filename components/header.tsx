@@ -3,12 +3,8 @@ import { Whisper } from "next/font/google"
 import { cn } from "@/lib/utils"
 import { Label } from "./ui/label"
 import { Input } from "./ui/input"
-import { checkToken } from "@/actions/check"
-import { useEffect, useState } from "react"
-import { useCookies } from "next-client-cookies"
 
 const whisper = Whisper({ subsets: ["latin"], weight: "400" })
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL
 
 type HeaderProps = {
   userInfo?: {

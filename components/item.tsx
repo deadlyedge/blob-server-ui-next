@@ -70,7 +70,7 @@ export const Item = ({ params, handleSelect }: ItemProps) => {
             src={showInfo.imageUrl}
             alt={showInfo.filename}
             fill
-            sizes='(max-width: 768px) 100vw, (max-width: 1200px) 60vw, 50vw'
+            sizes='50vw'
             className='object-contain'
           />
         )}

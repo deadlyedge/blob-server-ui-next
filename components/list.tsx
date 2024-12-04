@@ -2,7 +2,7 @@
 
 import { useToast } from "@/hooks/use-toast"
 import { FileInfoType } from "@/types"
-import { use, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { Item } from "./item"
 import { DeleteButton } from "./deleteButton"
 import { deleteFiles } from "@/actions/delete"

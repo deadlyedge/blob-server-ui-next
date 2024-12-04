@@ -34,6 +34,6 @@ export const formatBytes = (bytes: number, decimals = 1) => {
 /**
  * make a logger
  */
-export const logger = (...args: any[]) => {
+export const logger = (...args: string[]) => {
   console.log(new Date().toLocaleString(), " - ", ...args)
 }

@@ -1,12 +1,10 @@
 "use client"
 
 import { checkToken } from "@/actions/check"
-import { listFiles } from "@/actions/list"
 import { Header } from "@/components/header"
 import { List } from "@/components/list"
-import { FileInfoType } from "@/types"
 import { useCookies } from "next-client-cookies"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 type UserInfo = {
   user: string
