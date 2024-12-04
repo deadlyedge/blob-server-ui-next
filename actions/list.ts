@@ -1,29 +1,27 @@
 "use server"
 
-import { connectToBucket } from "@/lib/mongodb"
-import { FileInfoProps } from "@/types"
+import { FileInfoType } from "@/types"
+import axios from "axios"
 
-const baseUrl = process.env.BASE_URL as string
+const apiBaseUrl = process.env.API_BASE_URL as string
 
-export const listFiles = async (userId?: string) => {
-  const { bucket } = await connectToBucket(userId)
+export const listFiles = async (token: string) => {
+  try {
+    const response = await axios.get(`${apiBaseUrl}/list`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    const files: FileInfoType[] = response.data
 
-  const files = await bucket.find().toArray()
+    files.forEach((file) => {
+      // file.upload_at = new Date(file.upload_at).toLocaleString()
+      file.baseUrl = apiBaseUrl
+    })
 
-  if (!files) return []
-
-  const output: FileInfoProps[] = files.map((file) => ({
-    id: String(file._id),
-    filename: file.filename,
-    size: file.length,
-    // trans file.uploadDate to exist time from now in seconds
-    deltaTime: Math.floor(
-      (Date.now() - new Date(file.uploadDate).getTime()) / 1000
-    ),
-    baseUrl,
-    shortPath: file.metadata?.shortPath,
-    selected: false,
-  }))
-
-  return output
+    return files as FileInfoType[]
+  } catch (error) {
+    // console.error("Error listing files:", error)
+    return []
+  }
 }

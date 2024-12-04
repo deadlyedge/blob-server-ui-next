@@ -1,18 +1,20 @@
 "use server"
 
-import { ObjectId } from "mongodb"
-import { connectToBucket, connectToShortPathCollection } from "@/lib/mongodb"
 import { logger } from "@/lib/utils"
+import axios from "axios"
+import { redirect } from "next/navigation"
 
-export const deleteFiles = async (idsToDelete: string[]) => {
+export const deleteFiles = async (
+  idsToDelete: string[],
+  token: string | undefined
+) => {
   try {
-    const { bucket } = await connectToBucket()
-    const { shortPathCollection } = await connectToShortPathCollection()
-
     idsToDelete.forEach(async (id) => {
-      const objectId = new ObjectId(id)
-      await shortPathCollection.deleteOne({ _id: objectId })
-      await bucket.delete(objectId)
+      await axios.delete(`${process.env.API_BASE_URL}/delete/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
     })
 
     logger(`[DELETE FILES] ${idsToDelete.length} file(s) deleted.`)
