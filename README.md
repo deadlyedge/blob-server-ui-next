@@ -2,7 +2,7 @@
 
 - read user info
 - change token
-- upload file
+- upload file (batch)
 
 # tips
 
