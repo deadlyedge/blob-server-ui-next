@@ -3,7 +3,12 @@ import { Whisper } from "next/font/google"
 import { cn } from "@/lib/utils"
 import { Label } from "./ui/label"
 import { Input } from "./ui/input"
-
+import { UserUsageType } from "@/types"
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card"
 const whisper = Whisper({ subsets: ["latin"], weight: "400" })
 
 type HeaderProps = {
@@ -11,10 +16,28 @@ type HeaderProps = {
     user: string
     token: string
   } | null
+  userUsage: UserUsageType | null
   handleOnChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-export const Header = ({ userInfo, handleOnChange }: HeaderProps) => {
+export const Header = ({
+  userInfo,
+  userUsage,
+  handleOnChange,
+}: HeaderProps) => {
+  const showUsage = userUsage
+    ? Object.entries(userUsage)
+        .map(([key, value]) => {
+          if (typeof value === "number") {
+            return `${key}: ${value}`
+          }
+          if (key.endsWith("at")) {
+            return `${key}: ${new Date(value).toLocaleString()}`
+          }
+          return null
+        })
+        .filter(Boolean)
+    : []
 
   return (
     <>
@@ -24,7 +47,7 @@ export const Header = ({ userInfo, handleOnChange }: HeaderProps) => {
           <Label htmlFor='token'>your token</Label>
           <div className='flex items-center'>
             <Input
-              type='token'
+              // type='password'
               id='token'
               onChange={handleOnChange}
               defaultValue={userInfo?.token}
@@ -34,7 +57,16 @@ export const Header = ({ userInfo, handleOnChange }: HeaderProps) => {
             <div className='ml-2'>
               @
               {userInfo ? (
-                <span className='ml-1 text-green-500'>{userInfo?.user}</span>
+                <HoverCard>
+                  <HoverCardTrigger className='ml-1 text-green-500 underline'>
+                    {userInfo?.user}
+                  </HoverCardTrigger>
+                  <HoverCardContent className='text-xs'>
+                    {showUsage.map((item, i) => (
+                      <div key={i}>{item}</div>
+                    ))}
+                  </HoverCardContent>
+                </HoverCard>
               ) : (
                 <span className='ml-1 text-red-400'>need valid token</span>
               )}

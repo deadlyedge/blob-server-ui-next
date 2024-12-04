@@ -1,10 +1,12 @@
 "use client"
 
 import { checkToken } from "@/actions/check"
+import { getUsage } from "@/actions/usage"
 import { Header } from "@/components/header"
 import { List } from "@/components/list"
+import { UserUsageType } from "@/types"
 import { useCookies } from "next-client-cookies"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 type UserInfo = {
   user: string
@@ -18,6 +20,7 @@ export default function Home() {
     user: cookies.get("user") as string,
     token: cookies.get("token") as string,
   })
+  const [userUsage, setUserUsage] = useState<UserUsageType | null>(null)
   // const [filesInfo, setFilesInfo] = useState<FileInfoType[] | null>([])
 
   const handleOnChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,9 +41,20 @@ export default function Home() {
     }
   }
 
+  const getUserUsage = async () => {
+    if (userInfo?.token) {
+      const response = await getUsage(userInfo.token, userInfo.user)
+      setUserUsage(response)
+    }
+  }
+
+  useEffect(() => {
+    getUserUsage()
+  }, [userInfo])
+
   return (
     <main>
-      <Header userInfo={userInfo} handleOnChange={handleOnChange} />
+      <Header userInfo={userInfo} userUsage={userUsage} handleOnChange={handleOnChange} />
       <List token={userInfo?.token} />
     </main>
   )
