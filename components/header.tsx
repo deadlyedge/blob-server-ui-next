@@ -1,32 +1,29 @@
 import { Whisper } from "next/font/google"
-
 import { cn } from "@/lib/utils"
-import { Label } from "./ui/label"
-import { Input } from "./ui/input"
 import { UserUsageType } from "@/types"
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+
 const whisper = Whisper({ subsets: ["latin"], weight: "400" })
 
 type HeaderProps = {
-  userInfo?: {
+  user?: {
     user: string
     token: string
   } | null
-  userUsage: UserUsageType | null
-  handleOnChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  usage: UserUsageType | null
+  onAuthentication: (token: string) => void
 }
 
-export const Header = ({
-  userInfo,
-  userUsage,
-  handleOnChange,
-}: HeaderProps) => {
-  const showUsage = userUsage
-    ? Object.entries(userUsage)
+export const Header = ({ user, usage, onAuthentication }: HeaderProps) => {
+  // Improved usage display logic
+  const formattedUsage = usage
+    ? Object.entries(usage)
         .map(([key, value]) => {
           if (typeof value === "number") {
             return `${key}: ${value}`
@@ -41,38 +38,42 @@ export const Header = ({
 
   return (
     <>
+      {/* Background gradient */}
       <div className='w-24 h-24 sm:w-52 sm:h-32 right-0 top-0 fixed bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 background-animate bg-opacity-20'></div>
+
+      {/* Main header container */}
       <div className='w-full h-36 sm:h-20 right-0 top-0 fixed z-10 bg-zinc-500/40'>
         <div className='p-2 w-full h-28 flex flex-col text-start space-y-1 border-zinc-500 text-zinc-200'>
-          <Label htmlFor='token'>your token</Label>
+          <Label htmlFor='token'>Your Token</Label>
           <div className='flex items-center'>
             <Input
-              // type='password'
               id='token'
-              onChange={handleOnChange}
-              defaultValue={userInfo?.token}
+              onChange={(e) => onAuthentication(e.target.value)}
+              defaultValue={user?.token}
               placeholder='5209cf61-xxxx-xxxx-xxxx-600fe1105a9f'
               className='w-[300px] font-serif'
             />
             <div className='ml-2'>
               @
-              {userInfo ? (
+              {user ? (
                 <HoverCard>
                   <HoverCardTrigger className='ml-1 text-green-500 underline'>
-                    {userInfo?.user}
+                    {user.user}
                   </HoverCardTrigger>
                   <HoverCardContent className='text-xs'>
-                    {showUsage.map((item, i) => (
+                    {formattedUsage.map((item, i) => (
                       <div key={i}>{item}</div>
                     ))}
                   </HoverCardContent>
                 </HoverCard>
               ) : (
-                <span className='ml-1 text-red-400'>need valid token</span>
+                <span className='ml-1 text-red-400'>Need valid token</span>
               )}
             </div>
           </div>
         </div>
+
+        {/* Title section */}
         <section
           className={cn(
             whisper.className,

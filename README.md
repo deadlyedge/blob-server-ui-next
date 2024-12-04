@@ -7,3 +7,8 @@
 # tips
 
 for security reason, token should be hidden like password, but I just show it for developing.
+
+# deploy
+
+just fork this repo and use vercel to deploy.
+

@@ -7,15 +7,16 @@ export const deleteFiles = async (
   idsToDelete: string[],
   token: string | undefined
 ) => {
-  try {
-    idsToDelete.forEach(async (id) => {
-      await axios.delete(`${process.env.API_BASE_URL}/delete/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+  const deletePromises = idsToDelete.map((id) =>
+    axios.delete(`${process.env.API_BASE_URL}/delete/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
+  )
 
+  try {
+    await Promise.all(deletePromises)
     logger(`[DELETE FILES] ${idsToDelete.length} file(s) deleted.`)
   } catch (error) {
     logger(`delete failed, error: ${error}`)

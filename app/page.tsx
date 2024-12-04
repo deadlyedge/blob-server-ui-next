@@ -1,61 +1,67 @@
 "use client"
 
+import { useEffect, useState } from "react"
+import { useCookies } from "next-client-cookies"
 import { checkToken } from "@/actions/check"
 import { getUsage } from "@/actions/usage"
 import { Header } from "@/components/header"
 import { List } from "@/components/list"
 import { UserUsageType } from "@/types"
-import { useCookies } from "next-client-cookies"
-import { useEffect, useState } from "react"
 
-type UserInfo = {
+// More descriptive type alias
+type AuthenticatedUser = {
   user: string
   token: string
-} | null
+}
 
 export default function Home() {
-  const cookies = useCookies()
+  const cookies = useCookies() // Destructure for clarity
 
-  const [userInfo, setUserInfo] = useState<UserInfo>({
-    user: cookies.get("user") as string,
-    token: cookies.get("token") as string,
-  })
-  const [userUsage, setUserUsage] = useState<UserUsageType | null>(null)
-  // const [filesInfo, setFilesInfo] = useState<FileInfoType[] | null>([])
+  const [user, setUser] = useState<AuthenticatedUser | null>(null) // More concise name
 
-  const handleOnChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault()
-    const response = await checkToken(e.target.value)
+  const [usage, setUsage] = useState<UserUsageType | null>(null) // More concise name
+
+  // Initialize user state from cookies on mount
+  useEffect(() => {
+    const initialUser = {
+      user: cookies.get("user") as string,
+      token: cookies.get("token") as string,
+    }
+    setUser(initialUser.user && initialUser.token ? initialUser : null)
+  }, [])
+
+  const handleAuthentication = async (token: string) => {
+    const response = await checkToken(token)
     if (response) {
-      setUserInfo(response)
-      cookies.set("user", response.user, {
-        expires: new Date(Date.now() + 31536000000),
-      }) // 1 year
-      cookies.set("token", response.token, {
-        expires: new Date(Date.now() + 31536000000),
-      }) // 1 year
+      setUser(response)
+      cookies.set("user", response.user, { path: "/", expires: 31536000 }) // 1 year
+      cookies.set("token", response.token, { path: "/", expires: 31536000 }) // 1 year
     } else {
-      setUserInfo(null)
-      cookies.remove("user")
-      cookies.remove("token")
+      setUser(null)
+      cookies.remove("user", { path: "/" })
+      cookies.remove("token", { path: "/" })
     }
   }
 
-  const getUserUsage = async () => {
-    if (userInfo?.token) {
-      const response = await getUsage(userInfo.token, userInfo.user)
-      setUserUsage(response)
+  const fetchUsage = async () => {
+    if (user?.token) {
+      const response = await getUsage(user.token, user.user)
+      setUsage(response)
     }
   }
 
   useEffect(() => {
-    getUserUsage()
-  }, [userInfo])
+    fetchUsage()
+  }, [user])
 
   return (
     <main>
-      <Header userInfo={userInfo} userUsage={userUsage} handleOnChange={handleOnChange} />
-      <List token={userInfo?.token} />
+      <Header
+        user={user}
+        usage={usage}
+        onAuthentication={handleAuthentication}
+      />
+      <List token={user?.token} />
     </main>
   )
 }
