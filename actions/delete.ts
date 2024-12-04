@@ -2,7 +2,6 @@
 
 import { logger } from "@/lib/utils"
 import axios from "axios"
-import { redirect } from "next/navigation"
 
 export const deleteFiles = async (
   idsToDelete: string[],
@@ -19,6 +18,6 @@ export const deleteFiles = async (
 
     logger(`[DELETE FILES] ${idsToDelete.length} file(s) deleted.`)
   } catch (error) {
-    logger("delete failed", error)
+    logger(`delete failed, error: ${error}`)
   }
 }
