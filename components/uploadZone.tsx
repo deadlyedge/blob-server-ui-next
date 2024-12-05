@@ -7,16 +7,13 @@ import { LoaderIcon } from "lucide-react"
 import { useRefresh } from "./providers"
 import { batchUploadFiles } from "@/actions/upload"
 import { logger } from "@/lib/utils"
-type UploadZoneProps = {
-  token: string
-}
 
-export const UploadZone = ({ token }: UploadZoneProps) => {
+export const UploadZone = ({ token }: { token: string }) => {
   const [isPending, startTransition] = useTransition()
   const { refresh, setRefresh } = useRefresh()
 
   // use server action
-  const onDrop = async (acceptedFiles: any) => {
+  const onDrop = async (acceptedFiles: File[]) => {
     const files: File[] = Array.from(acceptedFiles ?? [])
 
     startTransition(async () => {
@@ -39,7 +36,7 @@ export const UploadZone = ({ token }: UploadZoneProps) => {
     })
   }
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps } = useDropzone({
     onDrop,
   })
 

@@ -71,7 +71,7 @@ export const List = ({ token }: { token: string | undefined }) => {
     toast(selectedFileIds.length > 0 ? "Selected Files" : "File List", {
       description: message,
     })
-  }, [fileList, selectedFileIds.length, toast])
+  }, [fileList, selectedFileIds.length])
 
   return (
     <>
