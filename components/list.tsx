@@ -8,22 +8,24 @@ import { DeleteButton } from "./deleteButton"
 import { deleteFiles } from "@/actions/delete"
 import { listFiles } from "@/actions/list"
 import { useRefresh } from "./providers"
+import { useRouter } from "next/navigation"
 
 export const List = ({ token }: { token: string | undefined }) => {
-  const [fileList, setFileList] = useState<FileInfoType[] | null>(null) // Initialize as null
+  const [fileList, setFileList] = useState<FileInfoType[] | null>(null)
+  const [selectedFileIds, setSelectedFileIds] = useState<string[]>([])
   const { refresh } = useRefresh()
-  const selectedFileIds =
-    fileList?.filter((file) => file.selected).map((file) => file.file_id) || []
+  const router = useRouter()
 
   const handleSelect = (fileId: string) => {
-    setFileList((prevList) =>
-      prevList
-        ? prevList.map((file) =>
-            file.file_id === fileId
-              ? { ...file, selected: !file.selected }
-              : file
-          )
-        : []
+    const updatedFileList =
+      fileList?.map((file) =>
+        file.file_id === fileId ? { ...file, selected: !file.selected } : file
+      ) || []
+    setFileList(updatedFileList)
+    setSelectedFileIds(
+      updatedFileList
+        .filter((file) => file.selected)
+        .map((file) => file.file_id)
     )
   }
 
@@ -32,10 +34,11 @@ export const List = ({ token }: { token: string | undefined }) => {
       try {
         await deleteFiles(selectedFileIds, token)
         await getFiles(token)
-      } catch (error) {
+        toast.success("Files deleted successfully!")
+      } catch (error: any) {
         console.error("Error deleting files:", error)
-        toast("Error", {
-          description: "Failed to delete files. Please try again later.",
+        toast.error("Error deleting files. Please try again later.", {
+          description: error.message,
         })
       }
     }
@@ -45,10 +48,11 @@ export const List = ({ token }: { token: string | undefined }) => {
     try {
       const files = await listFiles(token)
       setFileList(files)
-    } catch (error) {
+      setSelectedFileIds([]) // Clear selection after fetching new files
+    } catch (error: any) {
       console.error("Error fetching files:", error)
-      toast("Error", {
-        description: "Failed to fetch files. Please try again later.",
+      toast.error("Error fetching files. Please try again later.", {
+        description: error.message,
       })
     }
   }
@@ -56,9 +60,8 @@ export const List = ({ token }: { token: string | undefined }) => {
   useEffect(() => {
     if (token) {
       getFiles(token)
-    } else {
-      setFileList(null)
     }
+    router.refresh()
   }, [token, refresh])
 
   useEffect(() => {
@@ -88,7 +91,6 @@ export const List = ({ token }: { token: string | undefined }) => {
         ) : (
           <p>No files found.</p>
         )}
-        {/* Display message if no files */}
         {selectedFileIds.length > 0 && (
           <DeleteButton handleDelete={handleDelete} />
         )}
