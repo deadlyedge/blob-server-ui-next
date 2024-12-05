@@ -7,6 +7,7 @@ import { getUsage } from "@/actions/usage"
 import { Header } from "@/components/header"
 import { List } from "@/components/list"
 import { UserUsageType } from "@/types"
+import { useRefresh } from "@/components/providers"
 
 // More descriptive type alias
 type AuthenticatedUser = {
@@ -16,6 +17,7 @@ type AuthenticatedUser = {
 
 export default function Home() {
   const cookies = useCookies() // Destructure for clarity
+  const { refresh } = useRefresh()
   const [user, setUser] = useState<AuthenticatedUser | null>(null) // More concise name
 
   const [usage, setUsage] = useState<UserUsageType | null>(null) // More concise name
@@ -51,7 +53,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchUsage()
-  }, [user])
+  }, [user, refresh])
 
   return (
     <main>

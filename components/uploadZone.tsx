@@ -20,7 +20,7 @@ export const UploadZone = ({ token }: { token: string }) => {
       try {
         const response = await batchUploadFiles(files, token)
         logger(`response: ${JSON.stringify(response)}`)
-        toast("Upload Success", {
+        toast.success("Upload Success", {
           description: `${response.length} files uploaded`,
           duration: 8000,
         })

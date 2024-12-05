@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation"
 export const List = ({ token }: { token: string | undefined }) => {
   const [fileList, setFileList] = useState<FileInfoType[] | null>(null)
   const [selectedFileIds, setSelectedFileIds] = useState<string[]>([])
-  const { refresh } = useRefresh()
+  const { refresh, setRefresh } = useRefresh()
   const router = useRouter()
 
   const handleSelect = (fileId: string) => {
@@ -33,7 +33,7 @@ export const List = ({ token }: { token: string | undefined }) => {
     if (token && selectedFileIds.length > 0) {
       try {
         await deleteFiles(selectedFileIds, token)
-        await getFiles(token)
+        setRefresh(!refresh)
         toast.success("Files deleted successfully!")
       } catch (error: any) {
         console.error("Error deleting files:", error)
