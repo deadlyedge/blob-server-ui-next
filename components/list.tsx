@@ -10,7 +10,7 @@ import { listFiles } from "@/actions/list"
 import { useRefresh } from "./providers"
 import { useRouter } from "next/navigation"
 
-export const List = ({ token }: { token: string | undefined }) => {
+export const List = ({ token }: { token: string }) => {
   const [fileList, setFileList] = useState<FileInfoType[] | null>(null)
   const [selectedFileIds, setSelectedFileIds] = useState<string[]>([])
   const { refresh, setRefresh } = useRefresh()
@@ -30,7 +30,7 @@ export const List = ({ token }: { token: string | undefined }) => {
   }
 
   const handleDelete = async () => {
-    if (token && selectedFileIds.length > 0) {
+    if (selectedFileIds.length > 0) {
       try {
         await deleteFiles(selectedFileIds, token)
         setRefresh(!refresh)
@@ -44,7 +44,7 @@ export const List = ({ token }: { token: string | undefined }) => {
     }
   }
 
-  const getFiles = async (token: string) => {
+  const getFiles = async () => {
     try {
       const files = await listFiles(token)
       setFileList(files)
@@ -58,11 +58,9 @@ export const List = ({ token }: { token: string | undefined }) => {
   }
 
   useEffect(() => {
-    if (token) {
-      getFiles(token)
-    }
+    getFiles()
     router.refresh()
-  }, [token, refresh, router])
+  }, [refresh, router])
 
   useEffect(() => {
     const message =

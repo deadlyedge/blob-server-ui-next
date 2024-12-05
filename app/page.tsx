@@ -29,7 +29,7 @@ export default function Home() {
       token: cookies.get("token") as string,
     }
     setUser(initialUser.user && initialUser.token ? initialUser : null)
-  }, [])
+  }, [cookies])
 
   const handleAuthentication = async (token: string) => {
     const response = await checkToken(token)
@@ -53,7 +53,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchUsage()
-  }, [user, refresh, cookies])
+  }, [user, refresh])
 
   return (
     <main>
@@ -62,7 +62,13 @@ export default function Home() {
         usage={usage}
         onAuthentication={handleAuthentication}
       />
-      <List token={user?.token} />
+      {user ? (
+        <List token={user.token} />
+      ) : (
+        <div className='fixed w-full h-full flex items-center justify-center'>
+          Please use a valid token.
+        </div>
+      )}
     </main>
   )
 }
