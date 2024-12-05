@@ -1,19 +1,17 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { useToast } from "@/hooks/use-toast"
 import { FileInfoType } from "@/types"
+import { toast } from "sonner"
 import { Item } from "./item"
 import { DeleteButton } from "./deleteButton"
 import { deleteFiles } from "@/actions/delete"
 import { listFiles } from "@/actions/list"
+import { useRefresh } from "./providers"
 
 export const List = ({ token }: { token: string | undefined }) => {
   const [fileList, setFileList] = useState<FileInfoType[] | null>(null) // Initialize as null
-  const { toast } = useToast()
-  const router = useRouter()
-
+  const { refresh } = useRefresh()
   const selectedFileIds =
     fileList?.filter((file) => file.selected).map((file) => file.file_id) || []
 
@@ -36,10 +34,8 @@ export const List = ({ token }: { token: string | undefined }) => {
         await getFiles(token)
       } catch (error) {
         console.error("Error deleting files:", error)
-        toast({
-          title: "Error",
+        toast("Error", {
           description: "Failed to delete files. Please try again later.",
-          variant: "destructive",
         })
       }
     }
@@ -51,10 +47,8 @@ export const List = ({ token }: { token: string | undefined }) => {
       setFileList(files)
     } catch (error) {
       console.error("Error fetching files:", error)
-      toast({
-        title: "Error",
+      toast("Error", {
         description: "Failed to fetch files. Please try again later.",
-        variant: "destructive",
       })
     }
   }
@@ -65,8 +59,7 @@ export const List = ({ token }: { token: string | undefined }) => {
     } else {
       setFileList(null)
     }
-    router.refresh()
-  }, [token])
+  }, [token, refresh])
 
   useEffect(() => {
     const message =
@@ -75,8 +68,7 @@ export const List = ({ token }: { token: string | undefined }) => {
         : fileList
         ? `${fileList.length} file(s) in database.`
         : "No files found."
-    toast({
-      title: selectedFileIds.length > 0 ? "Selected Files" : "File List",
+    toast(selectedFileIds.length > 0 ? "Selected Files" : "File List", {
       description: message,
     })
   }, [fileList, selectedFileIds.length, toast])

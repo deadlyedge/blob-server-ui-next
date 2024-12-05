@@ -10,7 +10,10 @@ export const checkToken = async (token: string) => {
       headers: { Authorization: `Bearer ${token}` },
     })
     return { user: data.user, token }
-  } catch {
-    return null
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      return null
+    }
+    return { user: "api service offline", token }
   }
 }

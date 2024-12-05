@@ -16,7 +16,6 @@ type AuthenticatedUser = {
 
 export default function Home() {
   const cookies = useCookies() // Destructure for clarity
-
   const [user, setUser] = useState<AuthenticatedUser | null>(null) // More concise name
 
   const [usage, setUsage] = useState<UserUsageType | null>(null) // More concise name

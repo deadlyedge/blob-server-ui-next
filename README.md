@@ -15,7 +15,7 @@ then you can use this UI to manage your files.
 
 - ~~read user info~~
 - change token
-- upload file (batch)
+- ~~upload file (batch)~~
 
 # tips
 

@@ -4,7 +4,7 @@ import { useState } from "react"
 import Image from "next/image"
 import { FileInfoType } from "@/types"
 import { cn, formatBytes, delay } from "@/lib/utils"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 import {
   Download,
   FileBox,
@@ -26,13 +26,12 @@ type ItemProps = {
 
 export const Item = ({ params, handleSelect }: ItemProps) => {
   const [isCopied, setIsCopied] = useState(false)
-  const { toast } = useToast()
 
   const imageUrl = `${params.baseUrl}/s/${params.file_id}`
 
   // Improved icon selection logic
   const Icon = (() => {
-    if (params.file_name.match(/\.(jpg|jpeg|png|gif)$/i)) return ImageIcon
+    if (params.file_name.match(/\.(jpg|jpeg|png|gif|webp)$/i)) return ImageIcon
     if (params.file_name.match(/\.(pdf)$/i)) return FileText
     if (params.file_name.match(/\.(zip|7z|gz)$/i)) return FileBox
     if (params.file_name.match(/\.(mp4|mkv|avi)$/i)) return FileVideo
@@ -53,7 +52,7 @@ export const Item = ({ params, handleSelect }: ItemProps) => {
   const copyText = (text: string) => {
     navigator.clipboard.writeText(text)
     setIsCopied(true)
-    toast({ title: "Link Copied", description: text })
+    toast("Link Copied", { description: text })
     delay(2000).then(() => setIsCopied(false))
   }
 
