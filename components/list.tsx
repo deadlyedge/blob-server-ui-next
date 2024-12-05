@@ -35,10 +35,10 @@ export const List = ({ token }: { token: string | undefined }) => {
         await deleteFiles(selectedFileIds, token)
         setRefresh(!refresh)
         toast.success("Files deleted successfully!")
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Error deleting files:", error)
         toast.error("Error deleting files. Please try again later.", {
-          description: error.message,
+          description: `${error}`,
         })
       }
     }
@@ -49,10 +49,10 @@ export const List = ({ token }: { token: string | undefined }) => {
       const files = await listFiles(token)
       setFileList(files)
       setSelectedFileIds([]) // Clear selection after fetching new files
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error fetching files:", error)
       toast.error("Error fetching files. Please try again later.", {
-        description: error.message,
+        description: (error as string) || "Unknown error",
       })
     }
   }
@@ -62,7 +62,7 @@ export const List = ({ token }: { token: string | undefined }) => {
       getFiles(token)
     }
     router.refresh()
-  }, [token, refresh])
+  }, [token, refresh, router])
 
   useEffect(() => {
     const message =

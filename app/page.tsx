@@ -53,7 +53,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchUsage()
-  }, [user, refresh])
+  }, [user, refresh, cookies, fetchUsage])
 
   return (
     <main>
