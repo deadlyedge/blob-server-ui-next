@@ -24,14 +24,13 @@ export const UploadZone = ({ token }: { token: string }) => {
           description: `${response.length} files uploaded`,
           duration: 8000,
         })
+        setRefresh(!refresh)
       } catch (error) {
         logger(`error: ${error}`)
         toast.error("Upload Failed", {
           description: `${error}`,
           duration: 8000,
         })
-      } finally {
-        setRefresh(!refresh)
       }
     })
   }
