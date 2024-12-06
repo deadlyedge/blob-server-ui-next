@@ -90,7 +90,7 @@ export const UserDialog = ({ userToken, usage }: UserDialogProps) => {
         )}
         <div>
           [Last Download] has been hidden, because if you use this ui to manage
-          the pyBlobServer files, you have to `&apos;`download`&apos;` them.
+          the pyBlobServer files, you have to &apos;download&apos; them.
         </div>
         <DialogFooter>
           <ChangeToken userToken={userToken} />
