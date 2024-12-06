@@ -9,7 +9,6 @@ import {
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { UploadZone } from "./uploadZone"
-import { Button } from "./ui/button"
 import { ChangeToken } from "./changeToken"
 
 const whisper = Whisper({ subsets: ["latin"], weight: "400" })
