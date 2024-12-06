@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
   AlertDialog,
@@ -9,26 +10,22 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Replace } from "lucide-react"
 import { toast } from "sonner"
+import { RefreshCwOff, Replace } from "lucide-react"
 import { cn, delay } from "@/lib/utils"
-import { useState } from "react"
 import { changeToken } from "@/actions/changeToken"
+import { AuthenticatedUserType } from "@/types"
 
 export const ChangeToken = ({
   userToken,
 }: {
-  userToken: {
-    user: string
-    token: string
-  }
+  userToken: AuthenticatedUserType
 }) => {
   const [isCopied, setIsCopied] = useState(false)
   const [newToken, setNewToken] = useState(userToken.token)
-  const { user, token } = userToken
 
   const handleChangeToken = async () => {
-    const userUsage = await changeToken(user, token)
+    const userUsage = await changeToken(userToken)
     if (userUsage) setNewToken(userUsage.token)
   }
 
@@ -41,7 +38,7 @@ export const ChangeToken = ({
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger className='w-28 h-5 bg-orange-700 rounded-md hover:bg-orange-300 hover:text-zinc-700 transition-colors'>
+      <AlertDialogTrigger className='p-2 bg-orange-700 rounded-md hover:bg-orange-300 hover:text-zinc-700 transition-colors'>
         Change Token
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -49,21 +46,23 @@ export const ChangeToken = ({
           <AlertDialogTitle>Change Token</AlertDialogTitle>
           <AlertDialogDescription>
             Please confirm you want to CHANGE your current token
-            <br />
+          </AlertDialogDescription>
+          <div>
             <code className='bg-slate-800 rounded-md p-1'>
               {userToken.token}
             </code>
-          </AlertDialogDescription>
+          </div>
 
-          <div>
+          <div className='flex items-center'>
             <Button
               type='submit'
               variant='destructive'
-              className='m-2'
+              className='m-2 hover:motion-preset-blink'
               onClick={handleChangeToken}>
               <Replace className='mr-2 w-4 h-4' />
-              Generate NEW token
+              Change to NEW token
             </Button>
+            token will show below.
           </div>
 
           {userToken.token !== newToken && (
@@ -87,9 +86,14 @@ export const ChangeToken = ({
         <AlertDialogFooter>
           {/* <Button variant='secondary'>Generate</Button> */}
           <AlertDialogAction>
-            {userToken.token === newToken
-              ? "Continue with OLD token"
-              : "Close and use NEW token"}
+            {userToken.token === newToken ? (
+              <div className='flex items-center'>
+                <RefreshCwOff className='w-5 h-5 mr-2' />
+                Continue with OLD token
+              </div>
+            ) : (
+              "Close and use NEW token"
+            )}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -1,43 +1,20 @@
 import { Whisper } from "next/font/google"
 import { cn } from "@/lib/utils"
-import { UserUsageType } from "@/types"
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card"
+import { AuthenticatedUserType, UserUsageType } from "@/types"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { UploadZone } from "./uploadZone"
-import { ChangeToken } from "./changeToken"
+import { UserDialog } from "./userDialog"
 
 const whisper = Whisper({ subsets: ["latin"], weight: "400" })
 
 type HeaderProps = {
-  userToken?: {
-    user: string
-    token: string
-  } | null
+  userToken: AuthenticatedUserType | null
   usage: UserUsageType | null
   onAuthentication: (token: string) => void
 }
 
 export const Header = ({ userToken, usage, onAuthentication }: HeaderProps) => {
-  // Improved usage display logic
-  const formattedUsage = usage
-    ? Object.entries(usage)
-        .map(([key, value]) => {
-          if (typeof value === "number") {
-            return `${key}: ${value}`
-          }
-          if (key.endsWith("at")) {
-            return `${key}: ${new Date(value).toLocaleString()}`
-          }
-          return null
-        })
-        .filter(Boolean)
-    : []
-
   return (
     <>
       {/* Background gradient */}
@@ -48,28 +25,16 @@ export const Header = ({ userToken, usage, onAuthentication }: HeaderProps) => {
         {/* token section */}
         <div className='p-2 w-[320px] h-20 flex flex-col items-baseline justify-between border-zinc-500 text-zinc-200'>
           <div className='flex items-center text-sm'>
-            {userToken ? (
-              <ChangeToken userToken={userToken} />
+            {!userToken ? (
+              <>
+                <Label htmlFor='token'>Your Token</Label>
+                <div>
+                  @ <span className='ml-1 text-red-400'>Need valid token</span>
+                </div>
+              </>
             ) : (
-              <Label htmlFor='token'>Your Token</Label>
+              <UserDialog userToken={userToken} usage={usage} />
             )}
-            <div className='ml-2'>
-              @
-              {userToken ? (
-                <HoverCard>
-                  <HoverCardTrigger className='ml-1 text-green-500 underline'>
-                    {userToken.user}
-                  </HoverCardTrigger>
-                  <HoverCardContent className='text-xs'>
-                    {formattedUsage.map((item, i) => (
-                      <div key={i}>{item}</div>
-                    ))}
-                  </HoverCardContent>
-                </HoverCard>
-              ) : (
-                <span className='ml-1 text-red-400'>Need valid token</span>
-              )}
-            </div>
           </div>
           <div className='flex items-center'>
             <Input

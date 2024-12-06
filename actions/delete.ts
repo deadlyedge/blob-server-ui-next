@@ -5,7 +5,7 @@ import axios from "axios"
 
 export const deleteFiles = async (
   idsToDelete: string[],
-  token: string | undefined
+  token: string
 ) => {
   const deletePromises = idsToDelete.map((id) =>
     axios.delete(`${process.env.API_BASE_URL}/delete/${id}`, {

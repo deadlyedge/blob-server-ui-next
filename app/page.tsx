@@ -6,14 +6,10 @@ import { checkToken } from "@/actions/check"
 import { getUsage } from "@/actions/usage"
 import { Header } from "@/components/header"
 import { List } from "@/components/list"
-import { UserUsageType } from "@/types"
+import { AuthenticatedUserType, UserUsageType } from "@/types"
 import { useRefresh } from "@/components/providers"
 
 // More descriptive type alias
-type AuthenticatedUserType = {
-  user: string
-  token: string
-}
 
 export default function Home() {
   const cookies = useCookies() // Destructure for clarity
@@ -44,14 +40,13 @@ export default function Home() {
     }
   }
 
-  const fetchUsage = async () => {
-    if (userToken?.token) {
-      const response = await getUsage(userToken.token, userToken.user)
-      setUsage(response)
-    }
-  }
-
   useEffect(() => {
+    const fetchUsage = async () => {
+      if (userToken?.token) {
+        const response = await getUsage(userToken)
+        setUsage(response)
+      }
+    }
     fetchUsage()
   }, [userToken, refresh])
 

@@ -1,14 +1,14 @@
 "use server"
 
-import { UserUsageType } from "@/types"
+import { AuthenticatedUserType, UserUsageType } from "@/types"
 import axios from "axios"
 
 const apiBaseUrl = process.env.API_BASE_URL as string
 
-export const changeToken = async (
-  user: string,
-  token: string
-): Promise<UserUsageType | null> => {
+export const changeToken = async ({
+  user,
+  token,
+}: AuthenticatedUserType): Promise<UserUsageType | null> => {
   const url = `${apiBaseUrl}/user/${user}?function=change_token`
   const headers = {
     Authorization: `Bearer ${token}`,

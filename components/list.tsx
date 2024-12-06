@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import { FileInfoType } from "@/types"
 import { toast } from "sonner"
 import { Item } from "./item"
@@ -8,7 +9,6 @@ import { DeleteButton } from "./deleteButton"
 import { deleteFiles } from "@/actions/delete"
 import { listFiles } from "@/actions/list"
 import { useRefresh } from "./providers"
-import { useRouter } from "next/navigation"
 
 export const List = ({ token }: { token: string }) => {
   const [selectedFileIds, setSelectedFileIds] = useState<string[]>([])
@@ -41,26 +41,25 @@ export const List = ({ token }: { token: string }) => {
     }
   }
 
-  const getFiles = async () => {
-    setIsLoading(true)
-    try {
-      const fetchedFiles = await listFiles(token)
-      setFiles(fetchedFiles)
-      setSelectedFileIds([])
-    } catch (error: unknown) {
-      console.error("Error fetching files:", error)
-      toast.error("Error fetching files. Please try again later.", {
-        description: (error as string) || "Unknown error",
-      })
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   useEffect(() => {
+    const getFiles = async () => {
+      setIsLoading(true)
+      try {
+        const fetchedFiles = await listFiles(token)
+        setFiles(fetchedFiles)
+        setSelectedFileIds([])
+      } catch (error: unknown) {
+        console.error("Error fetching files:", error)
+        toast.error("Error fetching files. Please try again later.", {
+          description: (error as string) || "Unknown error",
+        })
+      } finally {
+        setIsLoading(false)
+      }
+    }
     getFiles()
     router.refresh()
-  }, [refresh, router])
+  }, [refresh, router, token])
 
   useEffect(() => {
     const message =
