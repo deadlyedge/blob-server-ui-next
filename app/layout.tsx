@@ -24,7 +24,7 @@ export default function RootLayout({
         <RefreshProvider>
           <CookiesProvider>{children}</CookiesProvider>
         </RefreshProvider>
-        <Toaster expand visibleToasts={2} />
+        <Toaster />
       </body>
     </html>
   )

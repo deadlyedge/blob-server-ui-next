@@ -9,7 +9,7 @@ export const checkToken = async (token: string) => {
     const { data } = await axios.get(`${apiBaseUrl}/auth`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-    return { user: data.user, token }
+    return data
   } catch (error: any) {
     if (error.response && error.response.status === 401) {
       return null

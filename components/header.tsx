@@ -9,11 +9,13 @@ import {
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { UploadZone } from "./uploadZone"
+import { Button } from "./ui/button"
+import { ChangeToken } from "./changeToken"
 
 const whisper = Whisper({ subsets: ["latin"], weight: "400" })
 
 type HeaderProps = {
-  user?: {
+  userToken?: {
     user: string
     token: string
   } | null
@@ -21,7 +23,7 @@ type HeaderProps = {
   onAuthentication: (token: string) => void
 }
 
-export const Header = ({ user, usage, onAuthentication }: HeaderProps) => {
+export const Header = ({ userToken, usage, onAuthentication }: HeaderProps) => {
   // Improved usage display logic
   const formattedUsage = usage
     ? Object.entries(usage)
@@ -47,13 +49,17 @@ export const Header = ({ user, usage, onAuthentication }: HeaderProps) => {
         {/* token section */}
         <div className='p-2 w-[320px] h-20 flex flex-col items-baseline justify-between border-zinc-500 text-zinc-200'>
           <div className='flex items-center text-sm'>
-            <Label htmlFor='token'>Your Token</Label>
+            {userToken ? (
+              <ChangeToken userToken={userToken} />
+            ) : (
+              <Label htmlFor='token'>Your Token</Label>
+            )}
             <div className='ml-2'>
               @
-              {user ? (
+              {userToken ? (
                 <HoverCard>
                   <HoverCardTrigger className='ml-1 text-green-500 underline'>
-                    {user.user}
+                    {userToken.user}
                   </HoverCardTrigger>
                   <HoverCardContent className='text-xs'>
                     {formattedUsage.map((item, i) => (
@@ -70,7 +76,7 @@ export const Header = ({ user, usage, onAuthentication }: HeaderProps) => {
             <Input
               id='token'
               onChange={(e) => onAuthentication(e.target.value)}
-              defaultValue={user?.token}
+              defaultValue={userToken?.token}
               placeholder='5209cf61-xxxx-xxxx-xxxx-600fe1105a9f'
               className='w-[300px] font-serif border-zinc-500 border-t-0 border-b-0'
             />
@@ -78,7 +84,7 @@ export const Header = ({ user, usage, onAuthentication }: HeaderProps) => {
         </div>
 
         {/* upload section */}
-        {user && <UploadZone token={user.token} />}
+        {userToken && <UploadZone token={userToken.token} />}
 
         {/* Title section */}
         <section

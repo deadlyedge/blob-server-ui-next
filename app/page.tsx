@@ -10,7 +10,7 @@ import { UserUsageType } from "@/types"
 import { useRefresh } from "@/components/providers"
 
 // More descriptive type alias
-type AuthenticatedUser = {
+type AuthenticatedUserType = {
   user: string
   token: string
 }
@@ -18,7 +18,7 @@ type AuthenticatedUser = {
 export default function Home() {
   const cookies = useCookies() // Destructure for clarity
   const { refresh } = useRefresh()
-  const [user, setUser] = useState<AuthenticatedUser | null>(null) // More concise name
+  const [userToken, setUserToken] = useState<AuthenticatedUserType | null>(null) // More concise name
 
   const [usage, setUsage] = useState<UserUsageType | null>(null) // More concise name
 
@@ -28,42 +28,42 @@ export default function Home() {
       user: cookies.get("user") as string,
       token: cookies.get("token") as string,
     }
-    setUser(initialUser.user && initialUser.token ? initialUser : null)
+    setUserToken(initialUser.user && initialUser.token ? initialUser : null)
   }, [cookies])
 
   const handleAuthentication = async (token: string) => {
     const response = await checkToken(token)
     if (response) {
-      setUser(response)
+      setUserToken(response)
       cookies.set("user", response.user, { path: "/", expires: 31536000 }) // 1 year
       cookies.set("token", response.token, { path: "/", expires: 31536000 }) // 1 year
     } else {
-      setUser(null)
+      setUserToken(null)
       cookies.remove("user", { path: "/" })
       cookies.remove("token", { path: "/" })
     }
   }
 
   const fetchUsage = async () => {
-    if (user?.token) {
-      const response = await getUsage(user.token, user.user)
+    if (userToken?.token) {
+      const response = await getUsage(userToken.token, userToken.user)
       setUsage(response)
     }
   }
 
   useEffect(() => {
     fetchUsage()
-  }, [user, refresh])
+  }, [userToken, refresh])
 
   return (
     <main>
       <Header
-        user={user}
+        userToken={userToken}
         usage={usage}
         onAuthentication={handleAuthentication}
       />
-      {user ? (
-        <List token={user.token} />
+      {userToken ? (
+        <List token={userToken.token} />
       ) : (
         <div className='fixed w-full h-full flex items-center justify-center'>
           Please use a valid token.

@@ -20,31 +20,32 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 
 type ItemProps = {
-  params: FileInfoType
-  handleSelect: (id: string) => void
+  file: FileInfoType // Define your FileType
+  selected: boolean
+  onSelect: (fileId: string) => void
 }
 
-export const Item = ({ params, handleSelect }: ItemProps) => {
+export const Item = ({ file, selected, onSelect }: ItemProps) => {
   const [isCopied, setIsCopied] = useState(false)
 
-  const imageUrl = `${params.baseUrl}/s/${params.file_id}`
+  const imageUrl = `${file.baseUrl}/s/${file.file_id}`
 
   // Improved icon selection logic
   const Icon = (() => {
-    if (params.file_name.match(/\.(jpg|jpeg|png|gif|webp)$/i)) return ImageIcon
-    if (params.file_name.match(/\.(pdf)$/i)) return FileText
-    if (params.file_name.match(/\.(zip|7z|gz)$/i)) return FileBox
-    if (params.file_name.match(/\.(mp4|mkv|avi)$/i)) return FileVideo
-    if (params.file_name.match(/\.(mp3|wav|flac)$/i)) return FileAudio
+    if (file.file_name.match(/\.(jpg|jpeg|png|gif|webp)$/i)) return ImageIcon
+    if (file.file_name.match(/\.(pdf)$/i)) return FileText
+    if (file.file_name.match(/\.(zip|7z|gz)$/i)) return FileBox
+    if (file.file_name.match(/\.(mp4|mkv|avi)$/i)) return FileVideo
+    if (file.file_name.match(/\.(mp3|wav|flac)$/i)) return FileAudio
     return FileCode2
   })()
 
   const fileInfo = {
-    filename: params.file_name,
+    filename: file.file_name,
     imageUrl,
-    fileSize: formatBytes(params.file_size),
+    fileSize: formatBytes(file.file_size),
     days: Math.floor(
-      (Date.now() - new Date(params.upload_at).getTime()) / 3600 / 24 / 1000
+      (Date.now() - new Date(file.upload_at).getTime()) / 3600 / 24 / 1000
     ),
     downloadUrl: `${imageUrl}?output=download`,
   }
@@ -60,7 +61,7 @@ export const Item = ({ params, handleSelect }: ItemProps) => {
     <Card
       className={cn(
         "outline-none shadow-md text-zinc-700 text-lg sm:text-xs m-2 p-2 w-full sm:w-72 hover:outline-blue-300 hover:outline-4 transition-all",
-        params.selected ? "bg-zinc-300/50" : "bg-white"
+        selected ? "bg-zinc-300/50" : "bg-white"
       )}>
       <CardContent className='w-full aspect-square relative mb-1 flex justify-center items-center'>
         {/* Improved Icon rendering */}
@@ -111,9 +112,9 @@ export const Item = ({ params, handleSelect }: ItemProps) => {
           </a>
           <Toggle
             className='hover:bg-red-200 data-[state=on]:bg-red-700'
-            id={params.file_id}
-            pressed={params.selected}
-            onPressedChange={() => handleSelect(params.file_id)}>
+            id={file.file_id}
+            pressed={selected}
+            onPressedChange={() => onSelect(file.file_id)}>
             <Trash2 className='w-4 h-4 text-red-300' />
           </Toggle>
         </div>
