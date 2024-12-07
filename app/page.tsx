@@ -2,8 +2,8 @@
 
 import { useEffect } from "react"
 import { useCookies } from "next-client-cookies"
-import { checkToken } from "@/actions/check"
-import { getUsage } from "@/actions/usage"
+// import {  } from "@/actions/check"
+import { getUsage, checkAuth } from "@/actions/actions"
 import { Header } from "@/components/header"
 import { List } from "@/components/list"
 import { AuthenticatedUserType, UserUsageType } from "@/types"
@@ -24,7 +24,7 @@ export default function Home() {
   }, [])
 
   const handleAuthentication = async (token: string) => {
-    const response = await checkToken(token)
+    const response = await checkAuth(token)
     if (response) {
       setUserToken(response)
       // cookies.set("user", response.user, { path: "/", expires: 31536000 })

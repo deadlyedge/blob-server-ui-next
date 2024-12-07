@@ -13,7 +13,7 @@ import {
 import { toast } from "sonner"
 import { ArrowUp, Replace } from "lucide-react"
 import { cn, delay } from "@/lib/utils"
-import { changeToken } from "@/actions/changeToken"
+import { changeToken } from "@/actions/actions"
 import { useAppStore } from "@/lib/store" // Import the store
 
 export const ChangeToken = () => {

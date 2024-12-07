@@ -6,8 +6,8 @@ import { FileInfoType } from "@/types"
 import { toast } from "sonner"
 import { Item } from "./item"
 import { DeleteButton } from "./deleteButton"
-import { deleteFiles } from "@/actions/delete"
-import { listFiles } from "@/actions/list"
+// import { } from "@/actions/delete"
+import { listFiles, deleteFiles } from "@/actions/actions"
 // import { useRefresh } from "./providers"
 import { useAppStore } from "@/lib/store" // Import the store
 
