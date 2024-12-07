@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react"
+import { useMutation } from "@tanstack/react-query"
+import { Button } from "@/components/ui/button"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,43 +10,41 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { toast } from "sonner";
-import { ArrowUp, Replace } from "lucide-react";
-import { cn, delay } from "@/lib/utils";
-import { changeToken } from "@/actions/actions";
-import { useAppStore } from "@/lib/store"; // Import the store
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { UserUsageType } from "@/types";
+} from "@/components/ui/alert-dialog"
+import { toast } from "sonner"
+import { ArrowUp, Replace } from "lucide-react"
+import { cn, delay } from "@/lib/utils"
+import { changeToken } from "@/actions/actions"
+import { useAppStore } from "@/lib/store" // Import the store
+import { UserUsageType } from "@/types"
 
 export const ChangeToken = () => {
-  const [isCopied, setIsCopied] = useState(false);
-  const { userToken, setUserToken } = useAppStore(); // Use the store
-  const queryClient = useQueryClient();
+  const [isCopied, setIsCopied] = useState(false)
+  const { userToken, setUserToken } = useAppStore() // Use the store
 
-  if (!userToken) return null;
+  if (!userToken) return null
 
   const mutation = useMutation({
     mutationFn: () => changeToken(userToken),
     onSuccess: (data: UserUsageType | null) => {
       if (data) {
-        setUserToken({ ...userToken, token: data.token });
-        setIsCopied(false);
+        setUserToken({ ...userToken, token: data.token })
+        setIsCopied(false)
       } else {
-        toast.error("Failed to change token: Unexpected response");
+        toast.error("Failed to change token: Unexpected response")
       }
     },
     onError: (error: Error) => {
-      toast.error("Failed to change token", { description: error.message });
+      toast.error("Failed to change token", { description: error.message })
     },
-  });
+  })
 
   const copyText = (text: string) => {
-    navigator.clipboard.writeText(text);
-    setIsCopied(true);
-    toast("TOKEN Copied", { description: text });
-    delay(20000).then(() => setIsCopied(false));
-  };
+    navigator.clipboard.writeText(text)
+    setIsCopied(true)
+    toast("TOKEN Copied", { description: text })
+    delay(20000).then(() => setIsCopied(false))
+  }
 
   return (
     <AlertDialog>
@@ -102,5 +101,5 @@ export const ChangeToken = () => {
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  );
-};
+  )
+}

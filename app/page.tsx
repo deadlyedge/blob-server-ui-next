@@ -2,15 +2,17 @@
 
 import { useEffect } from "react"
 import { useCookies } from "next-client-cookies"
+// import {  } from "@/actions/check"
 import { getUsage, checkAuth } from "@/actions/actions"
 import { Header } from "@/components/header"
 import { List } from "@/components/list"
 import { AuthenticatedUserType, UserUsageType } from "@/types"
+// import { useRefresh } from "@/components/providers"
 import { useAppStore } from "@/lib/store" // Import the store
-import { useQuery } from "@tanstack/react-query"
 
 export default function Home() {
   const cookies = useCookies()
+  // const { refresh } = useRefresh()
   const { userToken, setUserToken, setUsage, refresh } = useAppStore() // Use the store
 
   useEffect(() => {
@@ -21,42 +23,52 @@ export default function Home() {
     if (initialUser) setUserToken(initialUser)
   }, [])
 
-  const { data: authQuery, isSuccess: authQuerySuccess } = useQuery({
-    queryKey: ["auth", userToken?.token],
-    queryFn: () => checkAuth(userToken?.token ?? ""), // Handle undefined token
-    enabled: !!userToken?.token,
-  })
-  if (authQuerySuccess) setUserToken(authQuery)
-
   const handleAuthentication = async (token: string) => {
     const response = await checkAuth(token)
     if (response) {
       setUserToken(response)
+      // cookies.set("user", response.user, { path: "/", expires: 31536000 })
+      // cookies.set("token", response.token, { path: "/", expires: 31536000 })
     } else {
       setUserToken(null)
+      // cookies.remove("user", { path: "/" })
+      // cookies.remove("token", { path: "/" })
     }
   }
-
-  const { data: usageQuery, isSuccess: usageQuerySuccess } = useQuery({
-    queryKey: ["usage", userToken?.token],
-    queryFn: () => getUsage(userToken!), // Handle potential null userToken
-    enabled: !!userToken?.token,
-  })
-  if (usageQuerySuccess) setUsage(usageQuery)
 
   useEffect(() => {
     if (userToken && userToken.token) {
       cookies.set("user", userToken.user, { path: "/", expires: 31536000 })
       cookies.set("token", userToken.token, { path: "/", expires: 31536000 })
     } else {
+      // setUserToken(null)
       cookies.remove("user", { path: "/" })
       cookies.remove("token", { path: "/" })
     }
-  }, [userToken, cookies])
+  }, [userToken])
+
+  useEffect(() => {
+    const fetchUsage = async () => {
+      if (userToken && userToken.token) {
+        const response = await getUsage(userToken)
+        // Assuming getUsage returns UserUsageType, handle it accordingly
+        setUsage(response as UserUsageType) // Adjust this based on your actual usage handling
+
+        // if (response) {
+        //   // Handle the response as needed
+        // }
+      }
+    }
+    fetchUsage()
+  }, [userToken, refresh])
 
   return (
     <main>
-      <Header onAuthentication={handleAuthentication} />
+      <Header
+        // userToken={userToken}
+        // usage={null} // Adjust usage handling as needed
+        onAuthentication={handleAuthentication}
+      />
       {userToken ? (
         <List />
       ) : (

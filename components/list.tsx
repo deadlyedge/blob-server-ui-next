@@ -58,7 +58,7 @@ export const List = () => {
     queryFn: () => listFiles(userToken?.token!), // Handle potential null token
     enabled: !!userToken, // Only run query if userToken is available
   })
-  
+
   useEffect(() => {
     if (isError) {
       toast.error("Error fetching files. Please try again later.", {
@@ -70,7 +70,12 @@ export const List = () => {
   useEffect(() => {
     setFiles(fetchedFiles || [])
     setSelectedFileIds([])
-  }, [fetchedFiles, setFiles])
+    router.refresh()
+  }, [fetchedFiles, setFiles, refresh])
+
+  // useEffect(() => {
+  //   router.refresh()
+  // }, [refresh])
 
   useEffect(() => {
     const message =
@@ -88,7 +93,7 @@ export const List = () => {
     <>
       <div className='fixed z-40 left-0 bottom-0'></div>
       <div className='flex flex-wrap items-center justify-center relative sm:justify-start mt-[138px] sm:mt-20'>
-        {isLoading ? (
+        {isLoading || deleteMutation.isPending ? (
           <div className='relative w-full h-20 z-10 bg-black/50 flex flex-col items-center justify-center '>
             Loading...
           </div>
