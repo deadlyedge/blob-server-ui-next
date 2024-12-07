@@ -1,3 +1,5 @@
+'use server'
+
 import axios from "axios"
 import { logger } from "@/lib/utils"
 import { AuthenticatedUserType, FileInfoType, UserUsageType } from "@/types"

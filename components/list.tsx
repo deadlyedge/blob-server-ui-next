@@ -6,17 +6,15 @@ import { FileInfoType } from "@/types"
 import { toast } from "sonner"
 import { Item } from "./item"
 import { DeleteButton } from "./deleteButton"
-// import { } from "@/actions/delete"
 import { listFiles, deleteFiles } from "@/actions/actions"
-// import { useRefresh } from "./providers"
 import { useAppStore } from "@/lib/store" // Import the store
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 
 export const List = () => {
   const [selectedFileIds, setSelectedFileIds] = useState<string[]>([])
-  const [isLoading, setIsLoading] = useState(true)
   const { userToken, refresh, setRefresh, files, setFiles } = useAppStore() // Use the store
-  // const { refresh, setRefresh } = useRefresh()
   const router = useRouter()
+  const queryClient = useQueryClient()
 
   if (!userToken) return <div>Not authenticated</div>
 
@@ -29,40 +27,50 @@ export const List = () => {
     })
   }
 
-  const handleDelete = async () => {
+  const deleteMutation = useMutation({
+    mutationFn: (ids: string[]) => deleteFiles(ids, userToken.token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["files", userToken.token] })
+      setRefresh()
+      toast.success("Files deleted successfully!")
+    },
+    onError: (error: Error) => {
+      console.error("Error deleting files:", error)
+      toast.error("Error deleting files. Please try again later.", {
+        description: error.message,
+      })
+    },
+  })
+
+  const handleDelete = () => {
     if (selectedFileIds.length > 0) {
-      try {
-        await deleteFiles(selectedFileIds, userToken.token)
-        setRefresh()
-        toast.success("Files deleted successfully!")
-      } catch (error: unknown) {
-        console.error("Error deleting files:", error)
-        toast.error("Error deleting files. Please try again later.", {
-          description: `${error}`,
-        })
-      }
+      deleteMutation.mutate(selectedFileIds)
     }
   }
 
+  const {
+    data: fetchedFiles,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["files", userToken?.token], // Handle potential null token
+    queryFn: () => listFiles(userToken?.token!), // Handle potential null token
+    enabled: !!userToken, // Only run query if userToken is available
+  })
+  
   useEffect(() => {
-    const getFiles = async () => {
-      setIsLoading(true)
-      try {
-        const fetchedFiles = await listFiles(userToken.token)
-        setFiles(fetchedFiles)
-        setSelectedFileIds([])
-      } catch (error: unknown) {
-        console.error("Error fetching files:", error)
-        toast.error("Error fetching files. Please try again later.", {
-          description: (error as string) || "Unknown error",
-        })
-      } finally {
-        setIsLoading(false)
-      }
+    if (isError) {
+      toast.error("Error fetching files. Please try again later.", {
+        description: error.message,
+      })
     }
-    getFiles()
-    router.refresh()
-  }, [refresh, router, userToken.token, setFiles])
+  }, [isError])
+
+  useEffect(() => {
+    setFiles(fetchedFiles || [])
+    setSelectedFileIds([])
+  }, [fetchedFiles, setFiles])
 
   useEffect(() => {
     const message =
@@ -84,6 +92,8 @@ export const List = () => {
           <div className='relative w-full h-20 z-10 bg-black/50 flex flex-col items-center justify-center '>
             Loading...
           </div>
+        ) : isError ? (
+          <p>Error loading files: {error?.message}</p>
         ) : files ? (
           files.map((file) => (
             <Item

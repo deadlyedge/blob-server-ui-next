@@ -4,7 +4,7 @@ import "./globals.css"
 import { cn } from "@/lib/utils"
 import { CookiesProvider } from "next-client-cookies/server"
 import { Toaster } from "@/components/ui/sonner"
-// import { RefreshProvider } from "@/components/providers"
+import { QueryProvider } from "@/components/query-provider"
 
 const nunito = Nunito({ subsets: ["latin"] })
 
@@ -15,13 +15,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
     <html lang='en'>
       <body className={cn(nunito.className, "antialiased dark min-h-screen")}>
-        <CookiesProvider>{children}</CookiesProvider>
+        <QueryProvider>
+          <CookiesProvider>{children}</CookiesProvider>
+        </QueryProvider>
         <Toaster />
       </body>
     </html>
