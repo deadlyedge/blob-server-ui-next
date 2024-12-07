@@ -1,4 +1,3 @@
-import { AuthenticatedUserType, UserUsageType } from "@/types"
 import { ChangeToken } from "./changeToken"
 import {
   Dialog,
@@ -19,19 +18,18 @@ import {
 } from "@/components/ui/table"
 import { formatBytes } from "@/lib/utils"
 import { Info } from "lucide-react"
+import { useAppStore } from "@/lib/store"
 
-type UserDialogProps = {
-  userToken: AuthenticatedUserType
-  usage: UserUsageType | null
-}
+export const UserDialog = () => {
+  const { userToken, usage } = useAppStore()
 
-export const UserDialog = ({ userToken, usage }: UserDialogProps) => {
+  if (!userToken) return null
   return (
     <Dialog>
       <DialogTrigger className='truncate text-green-500 hover:text-yellow-500 hover:motion-preset-wobble'>
         <div className='flex items-center'>
           <Info className='w-4 h-4 ml-1' />
-          <span className='ml-1  underline'>{userToken.user}</span>
+          <span className='ml-1 underline'>{userToken.user}</span>
         </div>
       </DialogTrigger>
       <DialogContent>
@@ -88,12 +86,13 @@ export const UserDialog = ({ userToken, usage }: UserDialogProps) => {
             </Table>
           </>
         )}
-        <div>
+        <div className="text-xs text-zinc-400">
           [Last Download] has been hidden, because if you use this ui to manage
-          the pyBlobServer files, you have to &apos;download&apos; them.
+          the pyBlobServer files, you have to &apos;download&apos; them, so that
+          the download date will be updated.
         </div>
         <DialogFooter>
-          <ChangeToken userToken={userToken} />
+          <ChangeToken />
         </DialogFooter>
       </DialogContent>
     </Dialog>

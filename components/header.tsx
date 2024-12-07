@@ -5,16 +5,18 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { UploadZone } from "./uploadZone"
 import { UserDialog } from "./userDialog"
+import { useAppStore } from "@/lib/store"
 
 const whisper = Whisper({ subsets: ["latin"], weight: "400" })
 
 type HeaderProps = {
-  userToken: AuthenticatedUserType | null
-  usage: UserUsageType | null
+  // userToken: AuthenticatedUserType | null
+  // usage: UserUsageType | null
   onAuthentication: (token: string) => void
 }
 
-export const Header = ({ userToken, usage, onAuthentication }: HeaderProps) => {
+export const Header = ({ onAuthentication }: HeaderProps) => {
+  const { userToken } = useAppStore()
   return (
     <>
       {/* Background gradient */}
@@ -33,7 +35,7 @@ export const Header = ({ userToken, usage, onAuthentication }: HeaderProps) => {
                 </div>
               </>
             ) : (
-              <UserDialog userToken={userToken} usage={usage} />
+              <UserDialog />
             )}
           </div>
           <div className='flex items-center'>

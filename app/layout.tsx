@@ -4,7 +4,7 @@ import "./globals.css"
 import { cn } from "@/lib/utils"
 import { CookiesProvider } from "next-client-cookies/server"
 import { Toaster } from "@/components/ui/sonner"
-import { RefreshProvider } from "@/components/providers"
+// import { RefreshProvider } from "@/components/providers"
 
 const nunito = Nunito({ subsets: ["latin"] })
 
@@ -21,9 +21,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={cn(nunito.className, "antialiased dark min-h-screen")}>
-        <RefreshProvider>
-          <CookiesProvider>{children}</CookiesProvider>
-        </RefreshProvider>
+        <CookiesProvider>{children}</CookiesProvider>
         <Toaster />
       </body>
     </html>

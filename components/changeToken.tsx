@@ -11,29 +11,30 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { toast } from "sonner"
-import { RefreshCwOff, Replace } from "lucide-react"
+import { ArrowUp, Replace } from "lucide-react"
 import { cn, delay } from "@/lib/utils"
 import { changeToken } from "@/actions/changeToken"
-import { AuthenticatedUserType } from "@/types"
+import { useAppStore } from "@/lib/store" // Import the store
 
-export const ChangeToken = ({
-  userToken,
-}: {
-  userToken: AuthenticatedUserType
-}) => {
+export const ChangeToken = () => {
   const [isCopied, setIsCopied] = useState(false)
-  const [newToken, setNewToken] = useState(userToken.token)
+  const { userToken, setUserToken } = useAppStore() // Use the store
+
+  if (!userToken) return null
 
   const handleChangeToken = async () => {
     const userUsage = await changeToken(userToken)
-    if (userUsage) setNewToken(userUsage.token)
+    if (userUsage) {
+      setUserToken({ ...userToken, token: userUsage.token }) // Update token in the store
+      setIsCopied(false)
+    }
   }
 
   const copyText = (text: string) => {
     navigator.clipboard.writeText(text)
     setIsCopied(true)
     toast("TOKEN Copied", { description: text })
-    delay(2000).then(() => setIsCopied(false))
+    delay(20000).then(() => setIsCopied(false))
   }
 
   return (
@@ -47,11 +48,11 @@ export const ChangeToken = ({
           <AlertDialogDescription>
             Please confirm you want to CHANGE your current token
           </AlertDialogDescription>
-          <div>
+          {/* <div>
             <code className='bg-slate-800 rounded-md p-1'>
               {userToken.token}
             </code>
-          </div>
+          </div> */}
 
           <div className='flex items-center'>
             <Button
@@ -65,35 +66,38 @@ export const ChangeToken = ({
             token will show below.
           </div>
 
-          {userToken.token !== newToken && (
-            <div>
-              please save your new token carefully because once you close this
-              window, token will NOT show again and you can NEVER use your old
-              token again. <br />
-              <br />
-              Your new token is:{" "}
-              <code
-                className={cn(
-                  "text-zinc-900 rounded-md p-1",
-                  isCopied ? "bg-emerald-300" : "bg-yellow-200"
-                )}
-                onClick={() => copyText(newToken)}>
-                {newToken}
-              </code>
-            </div>
-          )}
+          {/* {userToken.token !== newToken && ( */}
+          <div>
+            please save your new token carefully because once you close this
+            window, token will NOT show again and you can NEVER use your old
+            token again. Please click to copy and store them somewhere safe, and
+            you will need it if you use them as enviroments in your other app's
+            APIs.
+            <br />
+            <br />
+            Your new token is:{" "}
+            <code
+              className={cn(
+                "text-zinc-900 rounded-md p-1",
+                isCopied ? "bg-emerald-300" : "bg-yellow-200"
+              )}
+              onClick={() => copyText(userToken.token)}>
+              {userToken.token}
+            </code>
+          </div>
+          {/* )} */}
         </AlertDialogHeader>
         <AlertDialogFooter>
           {/* <Button variant='secondary'>Generate</Button> */}
-          <AlertDialogAction>
-            {userToken.token === newToken ? (
-              <div className='flex items-center'>
-                <RefreshCwOff className='w-5 h-5 mr-2' />
-                Continue with OLD token
-              </div>
-            ) : (
+          <AlertDialogAction disabled={!isCopied}>
+            {/* {userToken.token === newToken ? ( */}
+            <div className='flex items-center'>
+              <ArrowUp className='w-5 h-5 mr-2' />
+              Continue with this TOKEN
+            </div>
+            {/* ) : (
               "Close and use NEW token"
-            )}
+            )} */}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

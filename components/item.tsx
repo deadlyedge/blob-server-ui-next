@@ -18,6 +18,7 @@ import {
 import { Toggle } from "@/components/ui/toggle"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { Skeleton } from "./ui/skeleton"
 
 type ItemProps = {
   file: FileInfoType // Define your FileType
@@ -31,6 +32,8 @@ export const Item = ({ file, selected, onSelect }: ItemProps) => {
   const imageUrl = `${file.baseUrl}/s/${file.file_id}`
 
   // Improved icon selection logic
+  if (!file.file_name) return <Skeleton />
+
   const Icon = (() => {
     if (file.file_name.match(/\.(jpg|jpeg|png|gif|webp)$/i)) return ImageIcon
     if (file.file_name.match(/\.(pdf)$/i)) return FileText

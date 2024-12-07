@@ -8,14 +8,17 @@ import { Item } from "./item"
 import { DeleteButton } from "./deleteButton"
 import { deleteFiles } from "@/actions/delete"
 import { listFiles } from "@/actions/list"
-import { useRefresh } from "./providers"
+// import { useRefresh } from "./providers"
+import { useAppStore } from "@/lib/store" // Import the store
 
-export const List = ({ token }: { token: string }) => {
+export const List = () => {
   const [selectedFileIds, setSelectedFileIds] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [files, setFiles] = useState<FileInfoType[] | null>(null)
-  const { refresh, setRefresh } = useRefresh()
+  const { userToken, refresh, setRefresh, files, setFiles } = useAppStore() // Use the store
+  // const { refresh, setRefresh } = useRefresh()
   const router = useRouter()
+
+  if (!userToken) return <div>Not authenticated</div>
 
   const onSelect = (fileId: string) => {
     setSelectedFileIds((prevSelectedIds) => {
@@ -29,8 +32,8 @@ export const List = ({ token }: { token: string }) => {
   const handleDelete = async () => {
     if (selectedFileIds.length > 0) {
       try {
-        await deleteFiles(selectedFileIds, token)
-        setRefresh(!refresh)
+        await deleteFiles(selectedFileIds, userToken.token)
+        setRefresh()
         toast.success("Files deleted successfully!")
       } catch (error: unknown) {
         console.error("Error deleting files:", error)
@@ -45,7 +48,7 @@ export const List = ({ token }: { token: string }) => {
     const getFiles = async () => {
       setIsLoading(true)
       try {
-        const fetchedFiles = await listFiles(token)
+        const fetchedFiles = await listFiles(userToken.token)
         setFiles(fetchedFiles)
         setSelectedFileIds([])
       } catch (error: unknown) {
@@ -59,7 +62,7 @@ export const List = ({ token }: { token: string }) => {
     }
     getFiles()
     router.refresh()
-  }, [refresh, router, token])
+  }, [refresh, router, userToken.token, setFiles])
 
   useEffect(() => {
     const message =

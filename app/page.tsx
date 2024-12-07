@@ -1,50 +1,62 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useCookies } from "next-client-cookies"
 import { checkToken } from "@/actions/check"
 import { getUsage } from "@/actions/usage"
 import { Header } from "@/components/header"
 import { List } from "@/components/list"
 import { AuthenticatedUserType, UserUsageType } from "@/types"
-import { useRefresh } from "@/components/providers"
-
-// More descriptive type alias
+// import { useRefresh } from "@/components/providers"
+import { useAppStore } from "@/lib/store" // Import the store
 
 export default function Home() {
-  const cookies = useCookies() // Destructure for clarity
-  const { refresh } = useRefresh()
-  const [userToken, setUserToken] = useState<AuthenticatedUserType | null>(null) // More concise name
+  const cookies = useCookies()
+  // const { refresh } = useRefresh()
+  const { userToken, setUserToken, setUsage, refresh } = useAppStore() // Use the store
 
-  const [usage, setUsage] = useState<UserUsageType | null>(null) // More concise name
-
-  // Initialize user state from cookies on mount
   useEffect(() => {
-    const initialUser = {
+    const initialUser: AuthenticatedUserType | null = {
       user: cookies.get("user") as string,
       token: cookies.get("token") as string,
     }
-    setUserToken(initialUser.user && initialUser.token ? initialUser : null)
-  }, [cookies])
+    if (initialUser) setUserToken(initialUser)
+  }, [])
 
   const handleAuthentication = async (token: string) => {
     const response = await checkToken(token)
     if (response) {
       setUserToken(response)
-      cookies.set("user", response.user, { path: "/", expires: 31536000 }) // 1 year
-      cookies.set("token", response.token, { path: "/", expires: 31536000 }) // 1 year
+      // cookies.set("user", response.user, { path: "/", expires: 31536000 })
+      // cookies.set("token", response.token, { path: "/", expires: 31536000 })
     } else {
       setUserToken(null)
-      cookies.remove("user", { path: "/" })
-      cookies.remove("token", { path: "/" })
+      // cookies.remove("user", { path: "/" })
+      // cookies.remove("token", { path: "/" })
     }
   }
 
   useEffect(() => {
+    if (userToken && userToken.token) {
+      cookies.set("user", userToken.user, { path: "/", expires: 31536000 })
+      cookies.set("token", userToken.token, { path: "/", expires: 31536000 })
+    } else {
+      // setUserToken(null)
+      cookies.remove("user", { path: "/" })
+      cookies.remove("token", { path: "/" })
+    }
+  }, [userToken])
+
+  useEffect(() => {
     const fetchUsage = async () => {
-      if (userToken?.token) {
+      if (userToken && userToken.token) {
         const response = await getUsage(userToken)
-        setUsage(response)
+        // Assuming getUsage returns UserUsageType, handle it accordingly
+        setUsage(response as UserUsageType) // Adjust this based on your actual usage handling
+
+        // if (response) {
+        //   // Handle the response as needed
+        // }
       }
     }
     fetchUsage()
@@ -53,12 +65,12 @@ export default function Home() {
   return (
     <main>
       <Header
-        userToken={userToken}
-        usage={usage}
+        // userToken={userToken}
+        // usage={null} // Adjust usage handling as needed
         onAuthentication={handleAuthentication}
       />
       {userToken ? (
-        <List token={userToken.token} />
+        <List />
       ) : (
         <div className='fixed w-full h-full flex items-center justify-center'>
           Please use a valid token.

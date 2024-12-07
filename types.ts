@@ -7,7 +7,7 @@ export type FileInfoType = {
   last_download_at: string
   upload_at: string
   baseUrl: string
-  selected?: boolean
+  // selected?: boolean
 }
 
 export type UserUsageType = {
