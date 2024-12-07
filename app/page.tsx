@@ -17,35 +17,22 @@ export default function Home() {
 
   useEffect(() => {
     const initialUser: AuthenticatedUserType | null = {
-      user: cookies.get("user") as string,
-      token: cookies.get("token") as string,
+      user: cookies.get("user") || "",
+      token: cookies.get("token") || "",
     }
     if (initialUser) setUserToken(initialUser)
   }, [])
 
-  const handleAuthentication = async (token: string) => {
-    const response = await checkAuth(token)
-    if (response) {
-      setUserToken(response)
-      // cookies.set("user", response.user, { path: "/", expires: 31536000 })
-      // cookies.set("token", response.token, { path: "/", expires: 31536000 })
-    } else {
-      setUserToken(null)
-      // cookies.remove("user", { path: "/" })
-      // cookies.remove("token", { path: "/" })
-    }
-  }
-
-  useEffect(() => {
-    if (userToken && userToken.token) {
-      cookies.set("user", userToken.user, { path: "/", expires: 31536000 })
-      cookies.set("token", userToken.token, { path: "/", expires: 31536000 })
-    } else {
-      // setUserToken(null)
-      cookies.remove("user", { path: "/" })
-      cookies.remove("token", { path: "/" })
-    }
-  }, [userToken])
+  // useEffect(() => {
+  //   if (userToken && userToken.token) {
+  //     cookies.set("user", userToken.user, { path: "/", expires: 31536000 })
+  //     cookies.set("token", userToken.token, { path: "/", expires: 31536000 })
+  //   } else {
+  //     // setUserToken(null)
+  //     cookies.remove("user", { path: "/" })
+  //     cookies.remove("token", { path: "/" })
+  //   }
+  // }, [userToken])
 
   useEffect(() => {
     const fetchUsage = async () => {
@@ -53,10 +40,6 @@ export default function Home() {
         const response = await getUsage(userToken)
         // Assuming getUsage returns UserUsageType, handle it accordingly
         setUsage(response as UserUsageType) // Adjust this based on your actual usage handling
-
-        // if (response) {
-        //   // Handle the response as needed
-        // }
       }
     }
     fetchUsage()
@@ -64,11 +47,7 @@ export default function Home() {
 
   return (
     <main>
-      <Header
-        // userToken={userToken}
-        // usage={null} // Adjust usage handling as needed
-        onAuthentication={handleAuthentication}
-      />
+      <Header />
       {userToken ? (
         <List />
       ) : (

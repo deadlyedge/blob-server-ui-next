@@ -15,10 +15,12 @@ import { ArrowUp, Replace } from "lucide-react"
 import { cn, delay } from "@/lib/utils"
 import { changeToken } from "@/actions/actions"
 import { useAppStore } from "@/lib/store" // Import the store
+import { useCookies } from "next-client-cookies"
 
 export const ChangeToken = () => {
   const [isCopied, setIsCopied] = useState(false)
   const { userToken, setUserToken } = useAppStore() // Use the store
+  const cookies = useCookies()
 
   if (!userToken) return null
 
@@ -26,6 +28,8 @@ export const ChangeToken = () => {
     const userUsage = await changeToken(userToken)
     if (userUsage) {
       setUserToken({ ...userToken, token: userUsage.token }) // Update token in the store
+      cookies.set("user", userUsage.user, { path: "/", expires: 31536000 })
+      cookies.set("token", userUsage.token, { path: "/", expires: 31536000 })
       setIsCopied(false)
     }
   }

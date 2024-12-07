@@ -1,3 +1,5 @@
+"use server"
+
 import axios from "axios"
 import { logger } from "@/lib/utils"
 import { AuthenticatedUserType, FileInfoType, UserUsageType } from "@/types"
@@ -24,17 +26,19 @@ export const changeToken = async ({
   }
 }
 
-export const checkAuth = async (token: string) => {
+export const checkAuth = async (
+  token: string
+): Promise<AuthenticatedUserType> => {
   try {
     const { data } = await axios.get(`${apiBaseUrl}/auth`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     return data
-  } catch (error: any) {
-    if (error.response && error.response.status === 401) {
-      return null
+  } catch (error) {
+    if (error instanceof Error && error.message.endsWith("401")) {
+      throw new Error("token not valid") // token not valid
     }
-    return { user: "api service offline", token }
+    throw new Error("api server error") // other errors
   }
 }
 

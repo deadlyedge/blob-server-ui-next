@@ -6,16 +6,13 @@ import { FileInfoType } from "@/types"
 import { toast } from "sonner"
 import { Item } from "./item"
 import { DeleteButton } from "./deleteButton"
-// import { } from "@/actions/delete"
 import { listFiles, deleteFiles } from "@/actions/actions"
-// import { useRefresh } from "./providers"
 import { useAppStore } from "@/lib/store" // Import the store
 
 export const List = () => {
   const [selectedFileIds, setSelectedFileIds] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const { userToken, refresh, setRefresh, files, setFiles } = useAppStore() // Use the store
-  // const { refresh, setRefresh } = useRefresh()
   const router = useRouter()
 
   if (!userToken) return <div>Not authenticated</div>
@@ -30,9 +27,11 @@ export const List = () => {
   }
 
   const handleDelete = async () => {
+    setIsLoading(true)
     if (selectedFileIds.length > 0) {
       try {
         await deleteFiles(selectedFileIds, userToken.token)
+        setIsLoading(false)
         setRefresh()
         toast.success("Files deleted successfully!")
       } catch (error: unknown) {

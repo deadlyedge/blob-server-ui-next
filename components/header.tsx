@@ -6,17 +6,28 @@ import { Input } from "@/components/ui/input"
 import { UploadZone } from "./uploadZone"
 import { UserDialog } from "./userDialog"
 import { useAppStore } from "@/lib/store"
+import { checkAuth } from "@/actions/actions"
+import { useCookies } from "next-client-cookies"
 
 const whisper = Whisper({ subsets: ["latin"], weight: "400" })
 
-type HeaderProps = {
-  // userToken: AuthenticatedUserType | null
-  // usage: UserUsageType | null
-  onAuthentication: (token: string) => void
-}
+export const Header = () => {
+  const { userToken, setUserToken } = useAppStore()
+  const cookies = useCookies()
 
-export const Header = ({ onAuthentication }: HeaderProps) => {
-  const { userToken } = useAppStore()
+  const onAuthentication = async (token: string) => {
+    try {
+      const response = await checkAuth(token)
+      setUserToken(response)
+      cookies.set("user", response.user, { path: "/", expires: 31536000 })
+      cookies.set("token", response.token, { path: "/", expires: 31536000 })
+    } catch (error) {
+      setUserToken(null)
+      cookies.remove("user", { path: "/" })
+      cookies.remove("token", { path: "/" })
+    }
+  }
+
   return (
     <>
       {/* Background gradient */}
