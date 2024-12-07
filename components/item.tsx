@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { Suspense, useState } from "react"
 import Image from "next/image"
 import { FileInfoType } from "@/types"
 import { cn, formatBytes, delay } from "@/lib/utils"
@@ -61,67 +61,73 @@ export const Item = ({ file, selected, onSelect }: ItemProps) => {
   }
 
   return (
-    <Card
-      className={cn(
-        "outline-none shadow-md text-zinc-700 text-lg sm:text-xs m-2 p-2 w-full sm:w-72 hover:outline-blue-300 hover:outline-4 transition-all",
-        selected ? "bg-zinc-300/50" : "bg-white"
-      )}>
-      <CardContent className='w-full aspect-square relative mb-1 flex justify-center items-center'>
-        {/* Improved Icon rendering */}
-        {Icon !== ImageIcon ? (
-          <Icon className='w-20 h-20' />
-        ) : (
-          <Image
-            src={fileInfo.imageUrl}
-            alt={fileInfo.filename}
-            fill
-            sizes='50vw'
-            className='object-contain'
-          />
-        )}
-      </CardContent>
-      <div>
-        <p className='truncate'>
-          Filename:
-          <code className='bg-zinc-200 px-1 rounded'>{fileInfo.filename}</code>
-        </p>
-        <p className='truncate rounded outline-none hover:outline-offset-1 hover:outline-2 hover:outline-orange-500 transition-all'>
-          URL:
-          <code
-            className={cn(
-              "px-1 rounded",
-              isCopied ? "bg-emerald-300" : "bg-zinc-200"
-            )}
-            onClick={() => copyText(fileInfo.imageUrl)}>
-            {fileInfo.imageUrl}
-          </code>
-        </p>
-        <p>
-          Size:{" "}
-          <code className='bg-zinc-200 px-1 rounded'>{fileInfo.fileSize}</code>
-        </p>
-        <p>
-          Uploaded:{" "}
-          <code className='bg-zinc-200 px-1 rounded'>
-            {fileInfo.days} days ago
-          </code>
-        </p>
-        <div className='mt-1 flex justify-between'>
-          <a href={fileInfo.downloadUrl} target='_blank'>
-            <Button className='bg-orange-100 hover:bg-green-300'>
-              <Download className='w-4 h-4 mr-2' />
-              Download
-            </Button>
-          </a>
-          <Toggle
-            className='hover:bg-red-200 data-[state=on]:bg-red-700'
-            id={file.file_id}
-            pressed={selected}
-            onPressedChange={() => onSelect(file.file_id)}>
-            <Trash2 className='w-4 h-4 text-red-300' />
-          </Toggle>
+    <Suspense fallback={<Skeleton className='w-full h-full' />}>
+      <Card
+        className={cn(
+          "outline-none shadow-md text-zinc-700 text-lg sm:text-xs m-2 p-2 w-full sm:w-72 hover:outline-blue-300 hover:outline-4 transition-all",
+          selected ? "bg-zinc-300/50" : "bg-white"
+        )}>
+        <CardContent className='w-full aspect-square relative mb-1 flex justify-center items-center'>
+          {/* Improved Icon rendering */}
+          {Icon !== ImageIcon ? (
+            <Icon className='w-20 h-20' />
+          ) : (
+            <Image
+              src={fileInfo.imageUrl}
+              alt={fileInfo.filename}
+              fill
+              sizes='50vw'
+              className='object-contain'
+            />
+          )}
+        </CardContent>
+        <div>
+          <p className='truncate'>
+            Filename:
+            <code className='bg-zinc-200 px-1 rounded'>
+              {fileInfo.filename}
+            </code>
+          </p>
+          <p className='truncate rounded outline-none hover:outline-offset-1 hover:outline-2 hover:outline-orange-500 transition-all'>
+            URL:
+            <code
+              className={cn(
+                "px-1 rounded",
+                isCopied ? "bg-emerald-300" : "bg-zinc-200"
+              )}
+              onClick={() => copyText(fileInfo.imageUrl)}>
+              {fileInfo.imageUrl}
+            </code>
+          </p>
+          <p>
+            Size:{" "}
+            <code className='bg-zinc-200 px-1 rounded'>
+              {fileInfo.fileSize}
+            </code>
+          </p>
+          <p>
+            Uploaded:{" "}
+            <code className='bg-zinc-200 px-1 rounded'>
+              {fileInfo.days} days ago
+            </code>
+          </p>
+          <div className='mt-1 flex justify-between'>
+            <a href={fileInfo.downloadUrl} target='_blank'>
+              <Button className='bg-orange-100 hover:bg-green-300'>
+                <Download className='w-4 h-4 mr-2' />
+                Download
+              </Button>
+            </a>
+            <Toggle
+              className='hover:bg-red-200 data-[state=on]:bg-red-700'
+              id={file.file_id}
+              pressed={selected}
+              onPressedChange={() => onSelect(file.file_id)}>
+              <Trash2 className='w-4 h-4 text-red-300' />
+            </Toggle>
+          </div>
         </div>
-      </div>
-    </Card>
+      </Card>
+    </Suspense>
   )
 }

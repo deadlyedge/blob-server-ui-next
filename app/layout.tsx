@@ -4,7 +4,6 @@ import "./globals.css"
 import { cn } from "@/lib/utils"
 import { CookiesProvider } from "next-client-cookies/server"
 import { Toaster } from "@/components/ui/sonner"
-// import { RefreshProvider } from "@/components/providers"
 
 const nunito = Nunito({ subsets: ["latin"] })
 

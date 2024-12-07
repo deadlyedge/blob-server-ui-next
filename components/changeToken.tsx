@@ -13,7 +13,7 @@ import {
 import { toast } from "sonner"
 import { ArrowUp, Replace } from "lucide-react"
 import { cn, delay } from "@/lib/utils"
-import { changeToken } from "@/actions/actions"
+import { changeToken } from "@/actions"
 import { useAppStore } from "@/lib/store" // Import the store
 import { useCookies } from "next-client-cookies"
 
@@ -52,11 +52,6 @@ export const ChangeToken = () => {
           <AlertDialogDescription>
             Please confirm you want to CHANGE your current token
           </AlertDialogDescription>
-          {/* <div>
-            <code className='bg-slate-800 rounded-md p-1'>
-              {userToken.token}
-            </code>
-          </div> */}
 
           <div className='flex items-center'>
             <Button
@@ -70,12 +65,11 @@ export const ChangeToken = () => {
             token will show below.
           </div>
 
-          {/* {userToken.token !== newToken && ( */}
           <div>
             please save your new token carefully because once you close this
             window, token will NOT show again and you can NEVER use your old
             token again. Please click to copy and store them somewhere safe, and
-            you will need it if you use them as enviroments in your other app's
+            you will need it if you use them as enviroments in your other app&apos;s
             APIs.
             <br />
             <br />
@@ -89,19 +83,14 @@ export const ChangeToken = () => {
               {userToken.token}
             </code>
           </div>
-          {/* )} */}
+
         </AlertDialogHeader>
         <AlertDialogFooter>
-          {/* <Button variant='secondary'>Generate</Button> */}
           <AlertDialogAction disabled={!isCopied}>
-            {/* {userToken.token === newToken ? ( */}
             <div className='flex items-center'>
               <ArrowUp className='w-5 h-5 mr-2' />
-              Continue with this TOKEN
+              {isCopied ? "Continue with this TOKEN" : "Click to copy first"}
             </div>
-            {/* ) : (
-              "Close and use NEW token"
-            )} */}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

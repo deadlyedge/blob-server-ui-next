@@ -1,13 +1,14 @@
 import { Whisper } from "next/font/google"
 import { cn } from "@/lib/utils"
-import { AuthenticatedUserType, UserUsageType } from "@/types"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { UploadZone } from "./uploadZone"
 import { UserDialog } from "./userDialog"
 import { useAppStore } from "@/lib/store"
-import { checkAuth } from "@/actions/actions"
+import { checkAuth } from "@/actions"
 import { useCookies } from "next-client-cookies"
+import debounce from "lodash.debounce"
+import { toast } from "sonner"
 
 const whisper = Whisper({ subsets: ["latin"], weight: "400" })
 
@@ -15,18 +16,21 @@ export const Header = () => {
   const { userToken, setUserToken } = useAppStore()
   const cookies = useCookies()
 
-  const onAuthentication = async (token: string) => {
+  const onAuthentication = async (token: string | undefined) => {
     try {
-      const response = await checkAuth(token)
+      const response = await checkAuth(token || "")
       setUserToken(response)
       cookies.set("user", response.user, { path: "/", expires: 31536000 })
       cookies.set("token", response.token, { path: "/", expires: 31536000 })
-    } catch (error) {
+      toast.info(`Welcome back, ${response.user}!`, { duration: 3000 })
+    } catch {
+      toast.error("Invalid token. Please try again.", { duration: 3000 })
       setUserToken(null)
       cookies.remove("user", { path: "/" })
       cookies.remove("token", { path: "/" })
     }
   }
+  const debouncedOnAuthentication = debounce(onAuthentication, 700)
 
   return (
     <>
@@ -38,7 +42,7 @@ export const Header = () => {
         {/* token section */}
         <div className='p-2 w-[320px] h-20 flex flex-col items-baseline justify-between border-zinc-500 text-zinc-200'>
           <div className='flex items-center text-sm'>
-            {!userToken ? (
+            {!userToken?.user ? (
               <>
                 <Label htmlFor='token'>Your Token</Label>
                 <div>
@@ -52,7 +56,7 @@ export const Header = () => {
           <div className='flex items-center'>
             <Input
               id='token'
-              onChange={(e) => onAuthentication(e.target.value)}
+              onChange={(e) => debouncedOnAuthentication(e.target.value)}
               defaultValue={userToken?.token}
               placeholder='5209cf61-xxxx-xxxx-xxxx-600fe1105a9f'
               className='w-[300px] font-serif border-zinc-500 border-t-0 border-b-0'

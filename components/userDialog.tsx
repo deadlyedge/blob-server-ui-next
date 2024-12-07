@@ -26,7 +26,7 @@ export const UserDialog = () => {
   if (!userToken) return null
   return (
     <Dialog>
-      <DialogTrigger className='truncate text-green-500 hover:text-yellow-500 hover:motion-preset-wobble'>
+      <DialogTrigger className='truncate text-green-500 hover:text-yellow-500 hover:motion-preset-wobble-sm'>
         <div className='flex items-center'>
           <Info className='w-4 h-4 ml-1' />
           <span className='ml-1 underline'>{userToken.user}</span>
@@ -47,7 +47,7 @@ export const UserDialog = () => {
                 <TableRow>
                   <TableHead className='text-right'>Upload</TableHead>
                   <TableHead className='text-right'>Download</TableHead>
-                  <TableHead className='text-right'>Size</TableHead>
+                  <TableHead className='text-right'>Space Used</TableHead>
                   <TableHead className='text-right'>Last Upload</TableHead>
                 </TableRow>
               </TableHeader>

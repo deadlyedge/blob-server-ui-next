@@ -4,15 +4,13 @@ import { useTransition } from "react"
 import { useDropzone } from "react-dropzone"
 import { toast } from "sonner"
 import { LoaderIcon } from "lucide-react"
-// import { useRefresh } from "./providers"
-import { batchUploadFiles } from "@/actions/upload"
+import { batchUploadFiles } from "@/actions"
 import { logger } from "@/lib/utils"
 import { useAppStore } from "@/lib/store" // Import the store
 
 export const UploadZone = ({ token }: { token: string }) => {
   const [isPending, startTransition] = useTransition()
-  // const { refresh, setRefresh } = useRefresh()
-  const { setFiles , setRefresh} = useAppStore() // Use the store
+  const { setFiles } = useAppStore() // Use the store
 
   // use server action
   const onDrop = async (acceptedFiles: File[]) => {
@@ -26,8 +24,7 @@ export const UploadZone = ({ token }: { token: string }) => {
           description: `${response.length} files uploaded`,
           duration: 8000,
         })
-        setFiles(response) // Update files in the store
-        setRefresh()
+        setFiles() // Update files in the store
       } catch (error) {
         logger(`error: ${error}`)
         toast.error("Upload Failed", {
