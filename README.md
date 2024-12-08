@@ -10,12 +10,15 @@ then you can use this UI to manage your files.
 
 # develop
 
+10 days, pyBlobServer with pydantic, fastapi, sqlalchemy, sqlite, peewee, tortoist, zustand, and react query, and lot more, without AI assistance, i can't image it.
 
 # todo
 
 - ~~read user info~~
-- change token
+- ~~change token~~
 - ~~upload file (batch)~~
+- first time visit get token
+- ~~use zustand to manage cookies~~
 
 # tips
 

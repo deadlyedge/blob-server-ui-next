@@ -6,7 +6,6 @@ import { UploadZone } from "./uploadZone"
 import { UserDialog } from "./userDialog"
 import { useAppStore } from "@/lib/store"
 import { checkAuth } from "@/actions"
-import { useCookies } from "next-client-cookies"
 import debounce from "lodash.debounce"
 import { toast } from "sonner"
 
@@ -14,20 +13,15 @@ const whisper = Whisper({ subsets: ["latin"], weight: "400" })
 
 export const Header = () => {
   const { userToken, setUserToken } = useAppStore()
-  const cookies = useCookies()
 
   const onAuthentication = async (token: string | undefined) => {
     try {
       const response = await checkAuth(token || "")
       setUserToken(response)
-      cookies.set("user", response.user, { path: "/", expires: 31536000 })
-      cookies.set("token", response.token, { path: "/", expires: 31536000 })
       toast.info(`Welcome back, ${response.user}!`, { duration: 3000 })
     } catch {
       toast.error("Invalid token. Please try again.", { duration: 3000 })
       setUserToken(null)
-      cookies.remove("user", { path: "/" })
-      cookies.remove("token", { path: "/" })
     }
   }
   const debouncedOnAuthentication = debounce(onAuthentication, 700)
