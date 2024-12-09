@@ -1,13 +1,15 @@
 import { Whisper } from "next/font/google"
 import { cn } from "@/lib/utils"
+import debounce from "lodash.debounce"
+
+import { useAppStore } from "@/lib/store"
+import { checkAuth } from "@/actions"
+
+import { toast } from "sonner"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { UploadZone } from "./uploadZone"
 import { UserDialog } from "./userDialog"
-import { useAppStore } from "@/lib/store"
-import { checkAuth } from "@/actions"
-import debounce from "lodash.debounce"
-import { toast } from "sonner"
 
 const whisper = Whisper({ subsets: ["latin"], weight: "400" })
 

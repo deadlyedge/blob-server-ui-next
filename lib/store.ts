@@ -1,16 +1,8 @@
 import { create } from "zustand"
-import { AuthenticatedUserType, FileInfoType, UserUsageType } from "@/types"
-import { getUsage, listFiles } from "@/actions"
 import { getCookie, setCookie, removeCookie } from "typescript-cookie"
 
-type AppState = {
-  userToken: AuthenticatedUserType | null
-  usage: UserUsageType | null
-  files: FileInfoType[] | null
-  setFiles: () => Promise<void>
-  setUserToken: (userToken: AuthenticatedUserType | null) => void
-  setUsage: () => Promise<void>
-}
+import { getUsage, listFiles, deleteFiles } from "@/actions"
+import { AuthenticatedUserType, FileInfoType, UserUsageType } from "@/types"
 
 type StateStorageType = {
   getItem: () => AuthenticatedUserType | null
@@ -38,16 +30,33 @@ export const cookiesStorage: StateStorageType = {
   },
 }
 
-export const useAppStore = create<AppState>((set) => ({
+type AppState = {
+  userToken: AuthenticatedUserType | null
+  usage: UserUsageType | null
+  files: FileInfoType[] | null
+  selectedFileIds: string[]
+  isLoading: boolean
+  setFiles: () => Promise<void>
+  setUserToken: (userToken: AuthenticatedUserType | null) => void
+  setUsage: () => Promise<void>
+  onSelect: (fileId: string) => void
+  handleDelete: () => Promise<void>
+}
+
+export const useAppStore = create<AppState>((set, get) => ({
   userToken: null,
   usage: null,
   files: null,
+  selectedFileIds: [],
+  isLoading: false,
   setFiles: async () => {
-    const files = await listFiles(useAppStore.getState().userToken?.token || "")
+    set({ isLoading: true })
+    const files = await listFiles(get().userToken?.token || "")
     set({ files })
+    set({ isLoading: false })
   },
   setUsage: async () => {
-    const currentUserToken = useAppStore.getState().userToken
+    const currentUserToken = get().userToken
     if (currentUserToken) {
       const usage = await getUsage(currentUserToken)
       set({ usage })
@@ -60,6 +69,30 @@ export const useAppStore = create<AppState>((set) => ({
     } else {
       cookiesStorage.setItem(userToken)
       set({ userToken })
+    }
+  },
+  onSelect: (fileId: string) => {
+    const { selectedFileIds } = get()
+    const isSelected = selectedFileIds.includes(fileId)
+    set({
+      selectedFileIds: isSelected
+        ? selectedFileIds.filter((id) => id !== fileId)
+        : [...selectedFileIds, fileId],
+    })
+  },
+  handleDelete: async () => {
+    const { selectedFileIds, userToken, setFiles } = get()
+    if (selectedFileIds.length > 0) {
+      set({ isLoading: true })
+      try {
+        await deleteFiles(selectedFileIds, userToken?.token || "")
+        set({ selectedFileIds: [] })
+        await setFiles()
+      } catch (error) {
+        console.error("Error deleting files:", error)
+      } finally {
+        set({ isLoading: false })
+      }
     }
   },
 }))
