@@ -4,7 +4,7 @@ import { useTransition } from "react"
 import { useDropzone } from "react-dropzone"
 import { toast } from "sonner"
 import { LoaderIcon } from "lucide-react"
-import { batchUploadFiles } from "@/actions"
+import { chunkedUploadFiles } from "@/actions"
 import { logger } from "@/lib/utils"
 import { useAppStore } from "@/lib/store" // Import the store
 
@@ -18,7 +18,8 @@ export const UploadZone = ({ token }: { token: string }) => {
 
     startTransition(async () => {
       try {
-        const response = await batchUploadFiles(files, token)
+        const response = await chunkedUploadFiles(files, token)
+        // const response = await batchUploadFiles(files, token)
         logger(`response: ${JSON.stringify(response)}`)
         toast.success("Upload Success", {
           description: `${response.length} files uploaded`,

@@ -98,6 +98,26 @@ export const batchUploadFiles = async (files: File[], token: string) => {
     throw error
   }
 }
+export const chunkedUploadFiles = async (files: File[], token: string) => {
+  try {
+    const response = [{}]
+    files.map(async (file) => {
+      const contentType = file.type || "application/octet-stream"
+      const res = await axios.post(`${apiBaseUrl}/chunked_upload`, file, {
+        headers: {
+          filename: file.name,
+          "Content-Type": contentType,
+          authorization: `Bearer ${token}`,
+        },
+      })
+      response.push(res.data)
+    })
+    return response
+  } catch (error) {
+    logger(`[UPLOAD FILES] ${error}`)
+    throw error
+  }
+}
 
 export const getUsage = async ({
   user,
