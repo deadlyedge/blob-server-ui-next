@@ -8,7 +8,7 @@ import { logger } from "@/lib/utils"
 import { useAppStore } from "@/lib/store" // Import the store
 import axios from "axios"
 
-const CHUNK_SIZE = 1024 * 512 // 256kb chunk size
+const CHUNK_SIZE = 1024 * 256 // 256kb chunk size
 
 export const UploadZone = ({ token }: { token: string }) => {
   const [isPending, startTransition] = useTransition()

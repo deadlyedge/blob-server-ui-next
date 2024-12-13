@@ -23,9 +23,6 @@ export const POST = async (req: Request) => {
   const fileChunk = formData.get("file")
   const chunkIndex = parseInt(formData.get("chunkIndex") as string, 10)
   const totalChunks = parseInt(formData.get("totalChunks") as string, 10)
-  // console.log(`token is: ${token}`)
-  const fileName =
-    fileChunk instanceof File ? fileChunk.name : "unknown-file-name"
 
   // Check if fileChunk is valid
   if (!fileChunk || !(fileChunk instanceof File)) {
@@ -33,6 +30,7 @@ export const POST = async (req: Request) => {
       status: 400,
     })
   }
+  const fileName = fileChunk.name
 
   // Store the chunk in memory
   if (!chunksMap.has(fileName)) {
