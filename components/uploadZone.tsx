@@ -8,90 +8,74 @@ import { logger } from "@/lib/utils"
 import { useAppStore } from "@/lib/store" // Import the store
 import axios from "axios"
 
-const CHUNK_SIZE = 1024 * 256 // 256kb chunk size
+const CHUNK_SIZE = 1024 * 256; // 256kb chunk size
 
 export const UploadZone = ({ token }: { token: string }) => {
   const [isPending, startTransition] = useTransition()
   const { setFiles } = useAppStore() // Use the store
 
-  const uploadChunk = async (
-    chunk: Blob,
-    fileName: string,
-    index: number,
-    totalChunks: number
-  ) => {
-    const formData = new FormData()
-    formData.append("token", token)
-    formData.append("file", chunk, fileName)
-    formData.append("chunkIndex", index.toString())
-    formData.append("totalChunks", totalChunks.toString())
+  const uploadChunk = async (chunk: Blob, fileName: string, index: number, totalChunks: number) => {
+    const formData = new FormData();
+    formData.append('token', token);
+    formData.append('file', chunk, fileName);
+    formData.append('chunkIndex', index.toString());
+    formData.append('totalChunks', totalChunks.toString());
 
     try {
-      const response = await axios.post("/api/upload", formData, {
+      const response = await axios.post('/api/upload', formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          'Content-Type': 'multipart/form-data',
         },
-      })
+      });
 
       if (!response.data) {
-        throw new Error(`Upload failed: ${response.statusText}`)
+        throw new Error(`Upload failed: ${response.statusText}`);
       }
 
-      console.log("Chunk upload result:", response.data)
+      console.log("Chunk upload result:", response.data);
     } catch (error) {
-      logger(`error: ${error}`)
+      logger(`error: ${error}`);
       toast.error("Upload Failed", {
         description: `${error}`,
         duration: 8000,
-      })
+      });
     }
-  }
+  };
 
-  // const streamUploadFiles = async (files: File[]) => {
-  //   for (const file of files) {
-  //     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
   const streamUploadFiles = async (files: File[]) => {
     for (const file of files) {
-      const totalChunks = Math.ceil(file.size / CHUNK_SIZE)
-      const uploadPromises = [] // Collect promises for concurrent uploads
-
+      const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
       for (let index = 0; index < totalChunks; index++) {
-        const start = index * CHUNK_SIZE
-        const end = Math.min(start + CHUNK_SIZE, file.size)
-        const chunk = file.slice(start, end) // Get the chunk
+        const start = index * CHUNK_SIZE;
+        const end = Math.min(start + CHUNK_SIZE, file.size);
+        const chunk = file.slice(start, end); // Get the chunk
 
-        console.log(
-          `Uploading chunk ${index + 1} of ${totalChunks} for file ${file.name}`
-        )
-        uploadPromises.push(uploadChunk(chunk, file.name, index, totalChunks)) // Schedule chunk upload
+        console.log(`Uploading chunk ${index + 1} of ${totalChunks} for file ${file.name}`);
+        await uploadChunk(chunk, file.name, index, totalChunks);
       }
-
-      await Promise.all(uploadPromises) // Wait for all uploads to complete
     }
-  }
-  //   };
-  // };
+  };
 
   const onDrop = async (acceptedFiles: File[]) => {
-    const files: File[] = Array.from(acceptedFiles ?? [])
+    const files: File[] = Array.from(acceptedFiles ?? []);
 
     startTransition(async () => {
       try {
-        await streamUploadFiles(files)
-        setFiles()
+        await streamUploadFiles(files);
+        setFiles();
       } catch (error) {
-        logger(`error: ${error}`)
+        logger(`error: ${error}`);
         toast.error("Upload Failed", {
           description: `${error}`,
           duration: 8000,
-        })
+        });
       }
-    })
-  }
+    });
+  };
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-  })
+  });
 
   return (
     <>
