@@ -7,8 +7,8 @@ import { LoaderIcon } from "lucide-react"
 import { delay, logger } from "@/lib/utils"
 import { useAppStore } from "@/lib/store" // Import the store
 
-const socket = new WebSocket(process.env.SOCKET_ENDPOINT as string)
-// const socket = new WebSocket("wss://f.zick.xyz/upload")
+// const socket = new WebSocket(process.env.SOCKET_ENDPOINT as string)
+const socket = new WebSocket("wss://f.zick.xyz/upload")
 
 export const UploadZone = ({ token }: { token: string }) => {
   const [isPending, startTransition] = useTransition()
