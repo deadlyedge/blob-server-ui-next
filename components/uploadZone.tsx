@@ -77,7 +77,7 @@ export const UploadZone = ({ token }: { token: string }) => {
     startTransition(async () => {
       try {
         socketUploadFiles(files)
-        delay(2000).then(() => setFiles())
+        setFiles()
       } catch (error) {
         logger(`error: ${error}`)
         toast.error("Upload Failed", {
