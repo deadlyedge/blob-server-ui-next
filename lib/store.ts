@@ -3,6 +3,7 @@ import { getCookie, setCookie, removeCookie } from "typescript-cookie"
 
 import { getUsage, listFiles, deleteFiles } from "@/actions"
 import { AuthenticatedUserType, FileInfoType, UserUsageType } from "@/types"
+import { delay } from "./utils"
 
 type StateStorageType = {
   getItem: () => AuthenticatedUserType | null
@@ -51,8 +52,15 @@ export const useAppStore = create<AppState>((set, get) => ({
   isLoading: false,
   setFiles: async () => {
     set({ isLoading: true })
-    const files = await listFiles(get().userToken?.token || "")
-    set({ files })
+    while (true) {
+      const files = await listFiles(get().userToken?.token || "")
+      if (files !== get().files) {
+        set({ files })
+        break
+      }
+      delay(2000)
+    }
+
     set({ isLoading: false })
   },
   setUsage: async () => {
