@@ -1,81 +1,93 @@
 "use client"
 
-import { useTransition } from "react"
+import { useEffect, useRef, useTransition } from "react"
 import { useDropzone } from "react-dropzone"
 import { toast } from "sonner"
 import { LoaderIcon } from "lucide-react"
-import { logger } from "@/lib/utils"
+import { delay, logger } from "@/lib/utils"
 import { useAppStore } from "@/lib/store" // Import the store
-import axios from "axios"
 
-const CHUNK_SIZE = 1024 * 256; // 256kb chunk size
+const socket = new WebSocket("ws://localhost:8000/upload")
 
 export const UploadZone = ({ token }: { token: string }) => {
   const [isPending, startTransition] = useTransition()
   const { setFiles } = useAppStore() // Use the store
+  const ws = useRef(socket)
 
-  const uploadChunk = async (chunk: Blob, fileName: string, index: number, totalChunks: number) => {
-    const formData = new FormData();
-    formData.append('token', token);
-    formData.append('file', chunk, fileName);
-    formData.append('chunkIndex', index.toString());
-    formData.append('totalChunks', totalChunks.toString());
+  // // let socket: WebSocket
+  useEffect(() => {
+    // Establish WebSocket connection
 
-    try {
-      const response = await axios.post('/api/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+    ws.current.onopen = () => {
+      console.log("WebSocket connection established")
+      socket.send(token) // Send the token immediately after connection is established
+    }
+    ws.current.onmessage = (event) => {
+      if (typeof event.data === "string")
+        console.log("Message from server:", event.data)
+      else if (typeof event.data === "object") toast.success("file uploaded")
+    }
 
-      if (!response.data) {
-        throw new Error(`Upload failed: ${response.statusText}`);
-      }
+    ws.current.onclose = () => {
+      console.log("WebSocket connection closed")
+    }
 
-      console.log("Chunk upload result:", response.data);
-    } catch (error) {
-      logger(`error: ${error}`);
-      toast.error("Upload Failed", {
-        description: `${error}`,
+    return () => {
+      // Close WebSocket connection on unmount
+      // ws.current.close()
+    }
+  }, [token])
+
+  const uploadSocket = async (fileName: string, fileBytes: ArrayBuffer) => {
+    console.log(token, ws.current)
+    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+      ws.current.send(fileName) // Send the file name
+      ws.current.send(fileBytes) // Send the file data
+      // socket.send(
+      //   new Uint8Array([
+      //     0x45, 0x4e, 0x44, 0x5f, 0x4f, 0x46, 0x5f, 0x46, 0x49, 0x4c, 0x45,
+      //   ])
+      // ) // Send end-of-file marker as binary
+      console.log("File sent to WebSocket")
+    } else {
+      logger("WebSocket is not open")
+      toast.error("WebSocket is not open", {
         duration: 8000,
-      });
+      })
     }
-  };
+  }
 
-  const streamUploadFiles = async (files: File[]) => {
+  const socketUploadFiles = async (files: File[]) => {
     for (const file of files) {
-      const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
-      for (let index = 0; index < totalChunks; index++) {
-        const start = index * CHUNK_SIZE;
-        const end = Math.min(start + CHUNK_SIZE, file.size);
-        const chunk = file.slice(start, end); // Get the chunk
-
-        console.log(`Uploading chunk ${index + 1} of ${totalChunks} for file ${file.name}`);
-        await uploadChunk(chunk, file.name, index, totalChunks);
+      const fileReader = new FileReader()
+      fileReader.onload = async () => {
+        const fileBytes = fileReader.result as ArrayBuffer
+        await uploadSocket(file.name, fileBytes) // Pass the file name
       }
+      fileReader.readAsArrayBuffer(file) // Read the file as an ArrayBuffer
     }
-  };
+  }
 
   const onDrop = async (acceptedFiles: File[]) => {
-    const files: File[] = Array.from(acceptedFiles ?? []);
+    const files: File[] = Array.from(acceptedFiles ?? [])
 
     startTransition(async () => {
       try {
-        await streamUploadFiles(files);
-        setFiles();
+        await socketUploadFiles(files)
+        delay(2000).then(() => setFiles())
       } catch (error) {
-        logger(`error: ${error}`);
+        logger(`error: ${error}`)
         toast.error("Upload Failed", {
           description: `${error}`,
           duration: 8000,
-        });
+        })
       }
-    });
-  };
+    })
+  }
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-  });
+  })
 
   return (
     <>
