@@ -8,38 +8,40 @@ import { delay, logger } from "@/lib/utils"
 import { useAppStore } from "@/lib/store" // Import the store
 
 // const socket = new WebSocket(process.env.SOCKET_ENDPOINT as string)
-const socket = new WebSocket("wss://f.zick.xyz/upload")
+// const socket = new WebSocket("wss://f.zick.xyz/upload")
 
 export const UploadZone = ({ token }: { token: string }) => {
   const [isPending, startTransition] = useTransition()
   const { setFiles } = useAppStore() // Use the store
-  const ws = useRef(socket)
+  const ws = useRef<WebSocket>(null)
 
-  // // let socket: WebSocket
   useEffect(() => {
     // Establish WebSocket connection
+    const socket = new WebSocket("wss://f.zick.xyz/upload")
 
-    ws.current.onopen = () => {
+    socket.onopen = () => {
       console.log("WebSocket connection established")
       socket.send(token) // Send the token immediately after connection is established
     }
-    ws.current.onmessage = (event) => {
+    socket.onmessage = (event) => {
       if (typeof event.data === "string")
         console.log("Message from server:", event.data)
       else if (typeof event.data === "object") toast.success("file uploaded")
     }
 
-    ws.current.onclose = () => {
+    socket.onclose = () => {
       console.log("WebSocket connection closed")
     }
 
+    ws.current = socket
+
     return () => {
       // Close WebSocket connection on unmount
-      // ws.current.close()
+      socket.close()
     }
   }, [token])
 
-  const uploadSocket = async (fileName: string, fileBytes: ArrayBuffer) => {
+  const uploadSocket = (fileName: string, fileBytes: ArrayBuffer) => {
     console.log(token, ws.current)
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       ws.current.send(fileName) // Send the file name
@@ -58,12 +60,12 @@ export const UploadZone = ({ token }: { token: string }) => {
     }
   }
 
-  const socketUploadFiles = async (files: File[]) => {
+  const socketUploadFiles = (files: File[]) => {
     for (const file of files) {
       const fileReader = new FileReader()
-      fileReader.onload = async () => {
+      fileReader.onload = () => {
         const fileBytes = fileReader.result as ArrayBuffer
-        await uploadSocket(file.name, fileBytes) // Pass the file name
+        uploadSocket(file.name, fileBytes) // Pass the file name
       }
       fileReader.readAsArrayBuffer(file) // Read the file as an ArrayBuffer
     }
@@ -74,7 +76,7 @@ export const UploadZone = ({ token }: { token: string }) => {
 
     startTransition(async () => {
       try {
-        await socketUploadFiles(files)
+        socketUploadFiles(files)
         delay(2000).then(() => setFiles())
       } catch (error) {
         logger(`error: ${error}`)
