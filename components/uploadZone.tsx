@@ -4,11 +4,8 @@ import { useEffect, useRef, useTransition } from "react"
 import { useDropzone } from "react-dropzone"
 import { toast } from "sonner"
 import { LoaderIcon } from "lucide-react"
-import { delay, logger } from "@/lib/utils"
+import { logger } from "@/lib/utils"
 import { useAppStore } from "@/lib/store" // Import the store
-
-// const socket = new WebSocket(process.env.SOCKET_ENDPOINT as string)
-// const socket = new WebSocket("wss://f.zick.xyz/upload")
 
 export const UploadZone = ({ token }: { token: string }) => {
   const [isPending, startTransition] = useTransition()
@@ -17,7 +14,9 @@ export const UploadZone = ({ token }: { token: string }) => {
 
   useEffect(() => {
     // Establish WebSocket connection
-    const socket = new WebSocket("wss://f.zick.xyz/upload")
+    const socket = new WebSocket(
+      process.env.NEXT_PUBLIC_SOCKET_ENDPOINT as string
+    )
 
     socket.onopen = () => {
       console.log("WebSocket connection established")
