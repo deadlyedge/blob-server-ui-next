@@ -4,8 +4,9 @@ import { useEffect, useRef, useTransition } from "react"
 import { useDropzone } from "react-dropzone"
 import { toast } from "sonner"
 import { LoaderIcon } from "lucide-react"
-import { logger } from "@/lib/utils"
+import { delay, logger } from "@/lib/utils"
 import { useAppStore } from "@/lib/store" // Import the store
+import Link from "next/link"
 
 export const UploadZone = ({ token }: { token: string }) => {
   const [isPending, startTransition] = useTransition()
@@ -23,9 +24,18 @@ export const UploadZone = ({ token }: { token: string }) => {
       socket.send(token) // Send the token immediately after connection is established
     }
     socket.onmessage = (event) => {
-      if (typeof event.data === "string")
-        console.log("Message from server:", event.data)
-      else if (typeof event.data === "object") toast.success("file uploaded")
+      if (typeof event.data === "string" && event.data.includes("file_url")) {
+        const jsonResponse = JSON.parse(event.data)
+        console.log(jsonResponse)
+        toast.success("file uploaded at", {
+          action: (
+            <a target='_blank' href={jsonResponse.show_image}>
+              {jsonResponse.show_image}
+            </a>
+          ),
+        })
+        setFiles()
+      }
     }
 
     socket.onclose = () => {
@@ -41,7 +51,7 @@ export const UploadZone = ({ token }: { token: string }) => {
   }, [token])
 
   const uploadSocket = (fileName: string, fileBytes: ArrayBuffer) => {
-    console.log(token, ws.current)
+    // console.log(token, ws.current)
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       ws.current.send(fileName) // Send the file name
       ws.current.send(fileBytes) // Send the file data
@@ -73,10 +83,9 @@ export const UploadZone = ({ token }: { token: string }) => {
   const onDrop = async (acceptedFiles: File[]) => {
     const files: File[] = Array.from(acceptedFiles ?? [])
 
-    startTransition(async () => {
+    startTransition(() => {
       try {
         socketUploadFiles(files)
-        setFiles()
       } catch (error) {
         logger(`error: ${error}`)
         toast.error("Upload Failed", {

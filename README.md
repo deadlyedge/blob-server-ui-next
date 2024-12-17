@@ -6,6 +6,11 @@ a simple UI for pyBlobServer
 
 you'd have your own pyBlobServer, and set `API_BASE_URL` to your server url.
 
+add an environment setting at `NEXT_PUBLIC_SOCKET_ENDPOINT=`, which should be 
+just like your API_BASE_URL, but like this partern: `wss://your.api.address/upload` 
+this variable should be passed to client to enable point-to-point socket file transfer
+so it MUST start with NEXT_PUBLIC_
+
 then you can use this UI to manage your files.
 
 # develop

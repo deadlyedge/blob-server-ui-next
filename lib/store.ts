@@ -52,15 +52,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   isLoading: false,
   setFiles: async () => {
     set({ isLoading: true })
-    while (true) {
-      const files = await listFiles(get().userToken?.token || "")
-      if (files !== get().files) {
-        set({ files })
-        break
-      }
-      delay(2000)
-    }
-
+    const files = await listFiles(get().userToken?.token || "")
+    set({ files })
     set({ isLoading: false })
   },
   setUsage: async () => {
