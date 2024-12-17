@@ -4,9 +4,8 @@ import { useEffect, useRef, useTransition } from "react"
 import { useDropzone } from "react-dropzone"
 import { toast } from "sonner"
 import { LoaderIcon } from "lucide-react"
-import { delay, logger } from "@/lib/utils"
+import { logger } from "@/lib/utils"
 import { useAppStore } from "@/lib/store" // Import the store
-import Link from "next/link"
 
 export const UploadZone = ({ token }: { token: string }) => {
   const [isPending, startTransition] = useTransition()

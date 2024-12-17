@@ -3,7 +3,6 @@ import { getCookie, setCookie, removeCookie } from "typescript-cookie"
 
 import { getUsage, listFiles, deleteFiles } from "@/actions"
 import { AuthenticatedUserType, FileInfoType, UserUsageType } from "@/types"
-import { delay } from "./utils"
 
 type StateStorageType = {
   getItem: () => AuthenticatedUserType | null
