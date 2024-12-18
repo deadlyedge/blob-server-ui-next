@@ -18,16 +18,19 @@ export const List = () => {
   } = useAppStore() // Use the store
 
   useEffect(() => {
-    const message =
-      selectedFileIds.length > 0
-        ? `${selectedFileIds.length} file(s) selected.`
-        : files
-        ? `${files.length} file(s) in database.`
-        : "No files found."
-    toast(selectedFileIds.length > 0 ? "Selected Files" : "File List", {
-      description: message,
-    })
-  }, [files, selectedFileIds.length])
+    if (selectedFileIds.length > 0) {
+      toast.info(`${selectedFileIds.length} file(s) selected.`)
+    }
+    // const message =
+    //   selectedFileIds.length > 0
+    //     && `${selectedFileIds.length} file(s) selected.`
+    //     // : files
+    //     // ? `${files.length} file(s) in database.`
+    //     // : "No files found."
+    // toast(selectedFileIds.length > 0 && "Selected Files" : "File List", {
+    //   description: message,
+    // })
+  }, [selectedFileIds.length])
 
   useEffect(() => {
     setFiles()
