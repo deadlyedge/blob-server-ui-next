@@ -1,6 +1,6 @@
 # pyBlobServer UI
 
-a simple UI for pyBlobServer
+a simple UI for [pyBlobServer](https://github.com/deadlyedge/pyBlobServer)
 
 # usage
 
@@ -22,7 +22,7 @@ then you can use this UI to manage your files.
 - ~~read user info~~
 - ~~change token~~
 - ~~upload file (batch)~~
-- first time visit get token
+- first time visit get token? for now, you must use an api GET @ your.domain/checkUser
 - ~~use zustand to manage cookies~~
 
 # tips

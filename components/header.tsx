@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input"
 import { UploadZone } from "./uploadZone"
 import { UserDialog } from "./userDialog"
 import { Filters } from "./filters"
+import { SearchBar } from "./search"
 
 const whisper = Whisper({ subsets: ["latin"], weight: "400" })
 
@@ -60,10 +61,13 @@ export const Header = () => {
 
         {/* upload section */}
         {userToken && (
-          <>
+          <div className="flex flex-row items-center">
             <UploadZone />
-            <Filters />
-          </>
+            <div className="ml-1 flex flex-col items-center">
+              <SearchBar />
+              <Filters />
+            </div>
+          </div>
         )}
 
         {/* Title section */}

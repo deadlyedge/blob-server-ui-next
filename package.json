@@ -20,6 +20,7 @@
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cmdk": "1.0.0",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.464.0",
     "next": "^15.1.0",
