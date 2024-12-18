@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { UploadZone } from "./uploadZone"
 import { UserDialog } from "./userDialog"
+import { Filters } from "./filters"
 
 const whisper = Whisper({ subsets: ["latin"], weight: "400" })
 
@@ -31,7 +32,7 @@ export const Header = () => {
   return (
     <>
       {/* Background gradient */}
-      <div className='w-24 h-24 sm:w-52 sm:h-32 right-0 top-0 fixed bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 background-animate bg-opacity-20'></div>
+      <div className='h-20 w-36 right-0 top-0 fixed bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 background-animate bg-opacity-20'></div>
 
       {/* Main header container */}
       <div className='w-full h-36 sm:h-20 right-0 top-0 fixed flex items-center z-10 bg-zinc-700/70'>
@@ -61,7 +62,7 @@ export const Header = () => {
         </div>
 
         {/* upload section */}
-        {userToken && <UploadZone token={userToken.token} />}
+        {userToken && <><UploadZone /><Filters /></>}
 
         {/* Title section */}
         <section
@@ -69,11 +70,11 @@ export const Header = () => {
             whisper.className,
             "fixed z-40 text-gray-100 scale-50 sm:scale-100 sm:h-40 sm:w-48 top-2 sm:top-0 right-0"
           )}>
-          <div className='absolute top-8 right-2 text-[3rem] mr-16 mt-10 -rotate-90'>
+          <div className='absolute top-8 right-2 text-[1rem] mr-16 mt-2 -rotate-90'>
             python
           </div>
           <div className='absolute inset-y-0 right-2'>
-            <div className='text-[5rem] -mt-8'>BlobServer</div>
+            <div className='text-[2rem] -mt-2'>BlobServer</div>
             <div className='font-sans text-xl mt-0 float-right'>NexTS</div>
           </div>
         </section>

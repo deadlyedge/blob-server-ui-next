@@ -8,10 +8,12 @@ import { logger } from "@/lib/utils"
 import { useAppStore } from "@/lib/store" // Import the store
 import axios from "axios"
 
-export const UploadZone = ({ token }: { token: string }) => {
+export const UploadZone = () => {
   const [isPending, startTransition] = useTransition()
-  const { setFiles } = useAppStore() // Use the store
+  const { userToken, setFiles } = useAppStore() // Use the store
   const ws = useRef<WebSocket>(null)
+
+  if (!userToken) return null
 
   useEffect(() => {
     // Establish WebSocket connection
@@ -21,7 +23,7 @@ export const UploadZone = ({ token }: { token: string }) => {
 
     socket.onopen = () => {
       console.log("WebSocket connection established")
-      socket.send(token) // Send the token immediately after connection is established
+      socket.send(userToken.token) // Send the token immediately after connection is established
     }
     socket.onmessage = (event) => {
       if (typeof event.data === "string" && event.data.includes("file_url")) {
@@ -48,7 +50,7 @@ export const UploadZone = ({ token }: { token: string }) => {
       // Close WebSocket connection on unmount
       socket.close()
     }
-  }, [token])
+  }, [userToken.token])
 
   // const uploadSocket = (fileName: string, fileBytes: ArrayBuffer) => {
   //   // console.log(token, ws.current)
@@ -75,7 +77,7 @@ export const UploadZone = ({ token }: { token: string }) => {
     totalChunks: number
   ) => {
     const formData = new FormData()
-    formData.append("token", token)
+    formData.append("token", userToken.token)
     formData.append("file", chunk, fileName)
     formData.append("chunkIndex", index.toString())
     formData.append("totalChunks", totalChunks.toString())
@@ -158,7 +160,7 @@ export const UploadZone = ({ token }: { token: string }) => {
         {...getRootProps()}
         className='z-50 w-40 h-20 flex flex-col justify-center items-center border-2 border-dashed text-zinc-800 bg-gray-100 rounded bg-opacity-50 cursor-pointer group hover:bg-opacity-90 duration-200 uppercase'>
         <div className='flex-auto text-center text-lg '>Drop Files Here</div>
-        <div className='flex-init'>
+        <div>
           <input {...getInputProps()} />
           <svg
             className='w-8 h-8 mx-auto rotate-45 text-blue-500 group-hover:rotate-[135deg] group-hover:text-lime-500 duration-200'
@@ -168,7 +170,7 @@ export const UploadZone = ({ token }: { token: string }) => {
             <path d='M13.41 12l4.3-4.29a1 1 0 1 0-1.42-1.42L12 10.59l-4.29-4.3a1 1 0 0 0-1.42 1.42l4.3 4.29-4.3 4.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l4.29-4.3 4.29 4.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z'></path>
           </svg>
         </div>
-        <div className='flex-auto ml-5 sm:ml-0 lg:ml-5 text-sm'>
+        <div className='text-sm'>
           click to select
         </div>
       </div>

@@ -45,7 +45,7 @@ export const List = () => {
           Loading...
         </div>
       )}
-      <div className='fixed z-40 left-0 bottom-0'></div>
+      {/* <div className='fixed z-40 left-0 bottom-0'></div> */}
       <div className='flex flex-wrap items-center justify-center relative sm:justify-start mt-[138px] sm:mt-20'>
         {files ? (
           files.map((file) => (

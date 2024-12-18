@@ -21,7 +21,7 @@ import { Info } from "lucide-react"
 import { useAppStore } from "@/lib/store"
 
 export const UserDialog = () => {
-  const { userToken, usage } = useAppStore()
+  const { files, userToken, usage } = useAppStore()
 
   if (!userToken) return null
   return (
@@ -47,7 +47,7 @@ export const UserDialog = () => {
                 <TableRow>
                   <TableHead className='text-right'>Upload</TableHead>
                   <TableHead className='text-right'>Download</TableHead>
-                  <TableHead className='text-right'>Space Used</TableHead>
+                  <TableHead className='text-right'>Total Files</TableHead>
                   <TableHead className='text-right'>Last Upload</TableHead>
                 </TableRow>
               </TableHeader>
@@ -60,7 +60,7 @@ export const UserDialog = () => {
                     {usage.total_download_times}
                   </TableCell>
                   <TableCell className='text-right'>
-                    {formatBytes(usage.total_size)}
+                    {files?.length}
                   </TableCell>
                   <TableCell className='text-right'>
                     {new Date(usage.last_upload_at).toLocaleString()}
@@ -71,6 +71,7 @@ export const UserDialog = () => {
                 <TableRow>
                   <TableHead className='text-right'>Bytes</TableHead>
                   <TableHead className='text-right'>Bytes</TableHead>
+                  <TableHead className='text-right'>Space Used</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -80,6 +81,9 @@ export const UserDialog = () => {
                   </TableCell>
                   <TableCell className='text-right'>
                     {formatBytes(usage.total_download_byte)}
+                  </TableCell>
+                  <TableCell className='text-right'>
+                    {formatBytes(usage.total_size)}
                   </TableCell>
                 </TableRow>
               </TableBody>
