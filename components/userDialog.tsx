@@ -36,7 +36,7 @@ export const UserDialog = () => {
         {usage && (
           <>
             <DialogHeader>
-              <DialogTitle>{userToken.user} info:</DialogTitle>
+              <DialogTitle>user: {userToken.user} info:</DialogTitle>
               <DialogDescription>
                 create at: {new Date(usage.created_at).toLocaleString()}
               </DialogDescription>

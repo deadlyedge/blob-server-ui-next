@@ -23,19 +23,6 @@ export type UserUsageType = {
   last_download_at: string
 }
 
-// export type UploadResponseType = {
-//   file_id: string
-//   file_url: string
-//   show_image: string
-//   available_space: string
-// }
-
-// export type UploadErrorType = {
-//   filename: string
-//   status_code: number
-//   error: string
-// }
-
 export type AuthenticatedUserType = {
   user: string
   token: string

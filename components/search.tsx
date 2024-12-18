@@ -1,7 +1,7 @@
 "use client"
 
-import { File, Search } from "lucide-react"
 import { useEffect, useState } from "react"
+import { File, Search } from "lucide-react"
 
 import {
   CommandDialog,
@@ -20,9 +20,9 @@ export const SearchBar = () => {
   const { files } = useAppStore()
 
   useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
+    const down = (event: KeyboardEvent) => {
+      if (event.key === "k" && (event.metaKey || event.ctrlKey)) {
+        event.preventDefault()
         setOpen((open) => !open)
       }
     }
@@ -58,17 +58,22 @@ export const SearchBar = () => {
         </kbd>
       </button>
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder='Search Your Events...' />
+        <CommandInput placeholder='Search Your Files...' />
         <DialogTitle className='hidden' />
         <CommandList>
-          <CommandEmpty>没找到结果</CommandEmpty>
+          <CommandEmpty>No Result</CommandEmpty>
           <CommandGroup>
             {files &&
               files.map(({ file_name, file_size, file_id }) => {
                 return (
                   <CommandItem key={file_id} onSelect={() => onClick(file_id)}>
-                    <File />
-                    {file_name}--{formatBytes(file_size)}
+                    <div className='grid grid-cols-8 w-full'>
+                      <File className='col-span-1' />
+                      <span className='col-span-6 truncate'>{file_name}</span>
+                      <span className='col-span-1 text-right'>
+                        {formatBytes(file_size)}
+                      </span>
+                    </div>
                   </CommandItem>
                 )
               })}

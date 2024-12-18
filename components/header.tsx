@@ -35,7 +35,7 @@ export const Header = () => {
       {/* Main header container */}
       <div className='w-full h-20 right-0 top-0 fixed flex items-center z-10 bg-zinc-700/80 backdrop-blur-md'>
         {/* token section */}
-        <div className='p-2 w-[320px] h-20 flex flex-col items-baseline justify-between border-zinc-500 text-zinc-200'>
+        <div className='p-2 sm:w-80 h-20 flex flex-col items-baseline justify-between border-zinc-500 text-zinc-200'>
           <div className='flex items-center text-sm'>
             {!userToken?.user ? (
               <>
@@ -54,7 +54,7 @@ export const Header = () => {
               onChange={(e) => debouncedOnAuthentication(e.target.value)}
               defaultValue={userToken?.token}
               placeholder='5209cf61-xxxx-xxxx-xxxx-600fe1105a9f'
-              className='w-[300px] font-serif border-zinc-500 border-t-0 border-b-0'
+              className='w-40 sm:w-[300px] font-serif border-zinc-500 border-t-0 border-b-0'
             />
           </div>
         </div>
