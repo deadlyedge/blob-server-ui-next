@@ -13,7 +13,7 @@ export const UploadZone = () => {
   const { userToken, setFiles } = useAppStore() // Use the store
   const ws = useRef<WebSocket>(null)
 
-  if (!userToken) return null
+  // if (!userToken) return null
 
   useEffect(() => {
     // Establish WebSocket connection
@@ -23,7 +23,7 @@ export const UploadZone = () => {
 
     socket.onopen = () => {
       console.log("WebSocket connection established")
-      socket.send(userToken.token) // Send the token immediately after connection is established
+      socket.send(userToken ? userToken.token : "") // Send the token immediately after connection is established
     }
     socket.onmessage = (event) => {
       if (typeof event.data === "string" && event.data.includes("file_url")) {
@@ -50,7 +50,7 @@ export const UploadZone = () => {
       // Close WebSocket connection on unmount
       socket.close()
     }
-  }, [userToken.token])
+  }, [userToken, setFiles])
 
   // const uploadSocket = (fileName: string, fileBytes: ArrayBuffer) => {
   //   // console.log(token, ws.current)
@@ -70,44 +70,44 @@ export const UploadZone = () => {
   //   //   })
   //   // }
   // }
-  const uploadChunk = async (
-    chunk: Blob,
-    fileName: string,
-    index: number,
-    totalChunks: number
-  ) => {
-    const formData = new FormData()
-    formData.append("token", userToken.token)
-    formData.append("file", chunk, fileName)
-    formData.append("chunkIndex", index.toString())
-    formData.append("totalChunks", totalChunks.toString())
-
-    try {
-      const response = await axios.post("/api/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-
-      if (!response.data) {
-        throw new Error(`Upload failed: ${response.statusText}`)
-      }
-
-      console.log("Chunk upload result:", response.data)
-      if (response.status === 200) setFiles()
-    } catch (error) {
-      logger(`error: ${error}`)
-      toast.error("Upload Failed", {
-        description: `${error}`,
-        duration: 8000,
-      })
-    }
-  }
 
   // const uploadSwitch = async (files: File[]) => {}
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     // const files: File[] = Array.from(acceptedFiles ?? [])
+    const uploadChunk = async (
+      chunk: Blob,
+      fileName: string,
+      index: number,
+      totalChunks: number
+    ) => {
+      const formData = new FormData()
+      formData.append("token", userToken ? userToken.token : "")
+      formData.append("file", chunk, fileName)
+      formData.append("chunkIndex", index.toString())
+      formData.append("totalChunks", totalChunks.toString())
+
+      try {
+        const response = await axios.post("/api/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+
+        if (!response.data) {
+          throw new Error(`Upload failed: ${response.statusText}`)
+        }
+
+        console.log("Chunk upload result:", response.data)
+        if (response.status === 200) setFiles()
+      } catch (error) {
+        logger(`error: ${error}`)
+        toast.error("Upload Failed", {
+          description: `${error}`,
+          duration: 8000,
+        })
+      }
+    }
 
     startTransition(async () => {
       // try {
@@ -148,7 +148,7 @@ export const UploadZone = () => {
       //   })
       // }
     })
-  }, [])
+  }, [userToken, setFiles])
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
@@ -170,9 +170,7 @@ export const UploadZone = () => {
             <path d='M13.41 12l4.3-4.29a1 1 0 1 0-1.42-1.42L12 10.59l-4.29-4.3a1 1 0 0 0-1.42 1.42l4.3 4.29-4.3 4.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l4.29-4.3 4.29 4.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z'></path>
           </svg>
         </div>
-        <div className='text-sm'>
-          click to select
-        </div>
+        <div className='text-sm'>click to select</div>
       </div>
       {isPending && (
         <div className='fixed w-full h-full flex justify-center items-center bg-black/50'>
