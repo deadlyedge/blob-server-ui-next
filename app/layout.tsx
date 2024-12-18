@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/sonner"
 const nunito = Nunito({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "blob server ui",
+  title: "pyBlobServer ui",
   description: "born to serve pyBlobServer",
 }
 

@@ -1,8 +1,11 @@
+'use client'
+
+import { useEffect } from "react"
 import { Whisper } from "next/font/google"
 import { cn } from "@/lib/utils"
 import debounce from "lodash.debounce"
 
-import { useAppStore } from "@/lib/store"
+import { cookiesStorage, useAppStore } from "@/lib/store"
 import { checkAuth } from "@/actions"
 
 import { toast } from "sonner"
@@ -12,11 +15,12 @@ import { UploadZone } from "./uploadZone"
 import { UserDialog } from "./userDialog"
 import { Filters } from "./filters"
 import { SearchBar } from "./search"
+import { AuthenticatedUserType } from "@/types"
 
 const whisper = Whisper({ subsets: ["latin"], weight: "400" })
 
 export const Header = () => {
-  const { userToken, setUserToken } = useAppStore()
+  const { userToken, setUserToken, setUsage } = useAppStore()
 
   const onAuthentication = async (token: string | undefined) => {
     try {
@@ -29,6 +33,15 @@ export const Header = () => {
     }
   }
   const debouncedOnAuthentication = debounce(onAuthentication, 700)
+
+  useEffect(() => {
+    const initialUser: AuthenticatedUserType | null = cookiesStorage.getItem()
+    if (initialUser) setUserToken(initialUser)
+  }, [setUserToken])
+
+  useEffect(() => {
+    setUsage() // Adjust this based on your actual usage handling
+  }, [userToken, setUsage])
 
   return (
     <>
@@ -61,9 +74,9 @@ export const Header = () => {
 
         {/* upload section */}
         {userToken && (
-          <div className="flex flex-row items-center">
+          <div className='flex flex-row items-center'>
             <UploadZone />
-            <div className="ml-1 flex flex-col items-center">
+            <div className='ml-1 flex flex-col items-center'>
               <SearchBar />
               <Filters />
             </div>
