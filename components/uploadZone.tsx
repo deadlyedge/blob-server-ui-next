@@ -1,12 +1,12 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useTransition } from "react"
+import axios from "axios"
 import { useDropzone } from "react-dropzone"
 import { toast } from "sonner"
 import { LoaderIcon } from "lucide-react"
 import { logger } from "@/lib/utils"
 import { useAppStore } from "@/lib/store" // Import the store
-import axios from "axios"
 
 export const UploadZone = () => {
   const [isPending, startTransition] = useTransition()

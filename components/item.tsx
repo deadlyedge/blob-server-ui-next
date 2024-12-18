@@ -65,7 +65,7 @@ export const Item = ({ file, selected, onSelect }: ItemProps) => {
       <Card
         className={cn(
           "outline-none shadow-md text-zinc-700 text-lg sm:text-xs m-2 p-2 w-full sm:w-72 hover:outline-blue-300 hover:outline-4 transition-all",
-          selected ? "bg-zinc-300/50" : "bg-white"
+          selected ? "bg-zinc-400/50" : "bg-zinc-200"
         )}>
         <CardContent className='w-full aspect-square relative mb-1 flex justify-center items-center'>
           {/* Improved Icon rendering */}

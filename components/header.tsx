@@ -31,11 +31,8 @@ export const Header = () => {
 
   return (
     <>
-      {/* Background gradient */}
-      <div className='h-20 w-36 right-0 top-0 fixed bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 background-animate bg-opacity-20'></div>
-
       {/* Main header container */}
-      <div className='w-full h-36 sm:h-20 right-0 top-0 fixed flex items-center z-10 bg-zinc-700/70'>
+      <div className='w-full h-20 right-0 top-0 fixed flex items-center z-10 bg-zinc-700/80 backdrop-blur-md'>
         {/* token section */}
         <div className='p-2 w-[320px] h-20 flex flex-col items-baseline justify-between border-zinc-500 text-zinc-200'>
           <div className='flex items-center text-sm'>
@@ -62,20 +59,26 @@ export const Header = () => {
         </div>
 
         {/* upload section */}
-        {userToken && <><UploadZone /><Filters /></>}
+        {userToken && (
+          <>
+            <UploadZone />
+            <Filters />
+          </>
+        )}
 
         {/* Title section */}
         <section
           className={cn(
             whisper.className,
-            "fixed z-40 text-gray-100 scale-50 sm:scale-100 sm:h-40 sm:w-48 top-2 sm:top-0 right-0"
+            "fixed text-gray-100 top-0 right-0"
           )}>
-          <div className='absolute top-8 right-2 text-[1rem] mr-16 mt-2 -rotate-90'>
+          <div className='h-20 w-36 right-0 top-0 fixed bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-opacity-20 blur z-20'></div>
+          <div className='absolute top-8 right-2 text-[1rem] mr-16 mt-2 -rotate-90 z-30'>
             python
           </div>
-          <div className='absolute inset-y-0 right-2'>
-            <div className='text-[2rem] -mt-2'>BlobServer</div>
-            <div className='font-sans text-xl mt-0 float-right'>NexTS</div>
+          <div className='absolute inset-y-0 right-2 z-30'>
+            <div className='text-[2rem] -mt-1'>BlobServer</div>
+            <div className='font-serif text-xl -mt-1 float-right'>NextUI</div>
           </div>
         </section>
       </div>
