@@ -13,8 +13,6 @@ export const UploadZone = () => {
   const { userToken, setFiles } = useAppStore() // Use the store
   const ws = useRef<WebSocket>(null)
 
-  // if (!userToken) return null
-
   useEffect(() => {
     // Establish WebSocket connection
     const socket = new WebSocket(
@@ -52,107 +50,103 @@ export const UploadZone = () => {
     }
   }, [userToken, setFiles])
 
-  // const uploadSocket = (fileName: string, fileBytes: ArrayBuffer) => {
-  //   // console.log(token, ws.current)
-  //   // if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-  //   websocket.send(fileName) // Send the file name
-  //   websocket.send(fileBytes) // Send the file data
-  //   // socket.send(
-  //   //   new Uint8Array([
-  //   //     0x45, 0x4e, 0x44, 0x5f, 0x4f, 0x46, 0x5f, 0x46, 0x49, 0x4c, 0x45,
-  //   //   ])
-  //   // ) // Send end-of-file marker as binary
-  //   console.log("File sending to WebSocket")
-  //   // } else {
-  //   //   logger("WebSocket is not open")
-  //   //   toast.error("WebSocket is not open", {
-  //   //     duration: 8000,
-  //   //   })
-  //   // }
-  // }
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      const uploadChunk = async (
+        chunk: Blob,
+        fileName: string,
+        index: number,
+        totalChunks: number
+      ) => {
+        const formData = new FormData()
+        formData.append("token", userToken ? userToken.token : "")
+        formData.append("file", chunk, fileName)
+        formData.append("chunkIndex", index.toString())
+        formData.append("totalChunks", totalChunks.toString())
 
-  // const uploadSwitch = async (files: File[]) => {}
+        try {
+          const response = await axios.post("/api/upload", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    // const files: File[] = Array.from(acceptedFiles ?? [])
-    const uploadChunk = async (
-      chunk: Blob,
-      fileName: string,
-      index: number,
-      totalChunks: number
-    ) => {
-      const formData = new FormData()
-      formData.append("token", userToken ? userToken.token : "")
-      formData.append("file", chunk, fileName)
-      formData.append("chunkIndex", index.toString())
-      formData.append("totalChunks", totalChunks.toString())
-
-      try {
-        const response = await axios.post("/api/upload", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
-
-        if (!response.data) {
-          throw new Error(`Upload failed: ${response.statusText}`)
-        }
-
-        console.log("Chunk upload result:", response.data)
-        if (response.status === 200) setFiles()
-      } catch (error) {
-        logger(`error: ${error}`)
-        toast.error("Upload Failed", {
-          description: `${error}`,
-          duration: 8000,
-        })
-      }
-    }
-
-    startTransition(async () => {
-      // try {
-      for (const file of acceptedFiles) {
-        if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-          const fileReader = new FileReader()
-          fileReader.onload = () => {
-            const fileBytes = fileReader.result as ArrayBuffer
-            // uploadSocket(file.name, fileBytes) // Pass the file name
-            ws.current?.send(file.name)
-            ws.current?.send(fileBytes)
-            console.log("File sending to WebSocket")
+          if (!response.data) {
+            throw new Error(`Upload failed: ${response.statusText}`)
           }
-          fileReader.readAsArrayBuffer(file) // Read the file as an ArrayBuffer
-        } else {
-          const CHUNK_SIZE = 1024 * 512
-          const totalChunks = Math.ceil(file.size / CHUNK_SIZE)
-          for (let index = 0; index < totalChunks; index++) {
-            const start = index * CHUNK_SIZE
-            const end = Math.min(start + CHUNK_SIZE, file.size)
-            const chunk = file.slice(start, end) // Get the chunk
 
-            console.log(
-              `Uploading chunk ${index + 1} of ${totalChunks} for file ${
-                file.name
-              }`
-            )
-            await uploadChunk(chunk, file.name, index, totalChunks)
-          }
+          console.log("Chunk upload result:", response.data)
+          if (response.status === 200) setFiles()
+        } catch (error) {
+          logger(`error: ${error}`)
+          toast.error("Upload Failed", {
+            description: `${error}`,
+            duration: 8000,
+          })
         }
       }
-      // uploadSwitch(files)
-      // } catch (error) {
-      //   logger(`error: ${error}`)
-      //   toast.error("Upload Failed", {
-      //     description: `${error}`,
-      //     duration: 8000,
-      //   })
-      // }
-    })
-  }, [userToken, setFiles])
+
+      startTransition(async () => {
+        for (const file of acceptedFiles) {
+          if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+            const fileReader = new FileReader()
+            fileReader.onload = () => {
+              const fileBytes = fileReader.result as ArrayBuffer
+              ws.current?.send(file.name)
+              ws.current?.send(fileBytes)
+              console.log("File sending to WebSocket")
+            }
+            fileReader.readAsArrayBuffer(file) // Read the file as an ArrayBuffer
+          } else {
+            const CHUNK_SIZE = 1024 * 512
+            const totalChunks = Math.ceil(file.size / CHUNK_SIZE)
+            for (let index = 0; index < totalChunks; index++) {
+              const start = index * CHUNK_SIZE
+              const end = Math.min(start + CHUNK_SIZE, file.size)
+              const chunk = file.slice(start, end) // Get the chunk
+
+              console.log(
+                `Uploading chunk ${index + 1} of ${totalChunks} for file ${
+                  file.name
+                }`
+              )
+              await uploadChunk(chunk, file.name, index, totalChunks)
+            }
+          }
+        }
+      })
+    },
+    [userToken, setFiles]
+  )
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
+    // noClick: true, // Prevent click to open file dialog
+    maxFiles: 5,
+    maxSize: 1024 * 1024 * 100, // 100MB limit
   })
+
+  useEffect(() => {
+    const handleDrop = (event: DragEvent) => {
+      event.preventDefault()
+      const files = Array.from(event.dataTransfer?.files || [])
+      if (files.length > 0) {
+        onDrop(files)
+      }
+    }
+
+    const handleDragOver = (event: DragEvent) => {
+      event.preventDefault()
+    }
+
+    window.addEventListener("drop", handleDrop)
+    window.addEventListener("dragover", handleDragOver)
+
+    return () => {
+      window.removeEventListener("drop", handleDrop)
+      window.removeEventListener("dragover", handleDragOver)
+    }
+  }, [onDrop])
 
   return (
     <>
