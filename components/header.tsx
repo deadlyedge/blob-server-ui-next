@@ -81,7 +81,7 @@ export const Header = () => {
           </div>
         </div>
 
-        <Separator className='h-8 bg-zinc-500' orientation='vertical' />
+        <Separator className='h-8 bg-zinc-500 mr-1' orientation='vertical' />
 
         {/* upload section */}
         {userToken && (

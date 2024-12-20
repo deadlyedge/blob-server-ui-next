@@ -122,7 +122,6 @@ export const UploadZone = () => {
 
   const { getRootProps, getInputProps } = useDropzone({
     // onDrop,
-    // noClick: true, // Prevent click to open file dialog
     // preventDropOnDocument: false,
     maxFiles: 5,
     maxSize: 1024 * 1024 * 100, // 100MB limit
