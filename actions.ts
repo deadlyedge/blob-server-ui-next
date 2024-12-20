@@ -87,7 +87,7 @@ export const batchUploadFiles = async (files: File[], token: string) => {
   })
 
   try {
-    const response = await axios.post(`${apiBaseUrl}/batch_upload`, formData, {
+    const response = await axios.post(`${apiBaseUrl}/upload_batch`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${token}`,

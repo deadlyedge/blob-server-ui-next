@@ -5,7 +5,7 @@ import axios from "axios"
 import { useDropzone } from "react-dropzone"
 import { toast } from "sonner"
 import { LoaderIcon } from "lucide-react"
-import { cn, logger } from "@/lib/utils"
+import { cn } from "@/lib/utils"
 import { useAppStore } from "@/lib/store" // Import the store
 
 export const UploadZone = () => {
@@ -53,43 +53,10 @@ export const UploadZone = () => {
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      const uploadChunk = async (
-        chunk: Blob,
-        fileName: string,
-        index: number,
-        totalChunks: number
-      ) => {
-        const formData = new FormData()
-        formData.append("token", userToken ? userToken.token : "")
-        formData.append("file", chunk, fileName)
-        formData.append("chunkIndex", index.toString())
-        formData.append("totalChunks", totalChunks.toString())
-
-        try {
-          const response = await axios.post("/api/upload", formData, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          })
-
-          if (!response.data) {
-            throw new Error(`Upload failed: ${response.statusText}`)
-          }
-
-          console.log("Chunk upload result:", response.data)
-          if (response.status === 200) setFiles()
-        } catch (error) {
-          logger(`error: ${error}`)
-          toast.error("Upload Failed", {
-            description: `${error}`,
-            duration: 8000,
-          })
-        }
-      }
-
+      if (!userToken?.token) return null
       startTransition(async () => {
-        for (const file of acceptedFiles) {
-          if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+        if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+          for (const file of acceptedFiles) {
             const fileReader = new FileReader()
             fileReader.onload = () => {
               const fileBytes = fileReader.result as ArrayBuffer
@@ -98,22 +65,15 @@ export const UploadZone = () => {
               console.log("File sending to WebSocket")
             }
             fileReader.readAsArrayBuffer(file) // Read the file as an ArrayBuffer
-          } else {
-            const CHUNK_SIZE = 1024 * 512
-            const totalChunks = Math.ceil(file.size / CHUNK_SIZE)
-            for (let index = 0; index < totalChunks; index++) {
-              const start = index * CHUNK_SIZE
-              const end = Math.min(start + CHUNK_SIZE, file.size)
-              const chunk = file.slice(start, end) // Get the chunk
-
-              console.log(
-                `Uploading chunk ${index + 1} of ${totalChunks} for file ${
-                  file.name
-                }`
-              )
-              await uploadChunk(chunk, file.name, index, totalChunks)
-            }
           }
+        } else {
+          // Fallback to the previous method if WebSocket is not available
+          const batchFiles = new FormData()
+          acceptedFiles.forEach((file) => batchFiles.append("files", file))
+          batchFiles.append("token", userToken.token)
+
+          await axios.post("/api/upload", batchFiles)
+          setFiles()
         }
       })
     },
