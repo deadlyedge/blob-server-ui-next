@@ -120,20 +120,25 @@ export const UploadZone = () => {
     [userToken, setFiles]
   )
 
-  // const { getRootProps, getInputProps } = useDropzone({
-  //   // onDrop,
-  //   // noClick: true, // Prevent click to open file dialog
-  //   // preventDropOnDocument: false,
-  //   maxFiles: 5,
-  //   maxSize: 1024 * 1024 * 100, // 100MB limit
-  // })
+  const { getRootProps, getInputProps } = useDropzone({
+    // onDrop,
+    // noClick: true, // Prevent click to open file dialog
+    // preventDropOnDocument: false,
+    maxFiles: 5,
+    maxSize: 1024 * 1024 * 100, // 100MB limit
+  })
 
   useEffect(() => {
+    const dropArea = document.getElementById("drop-zone")
+    const leaveArea = document.getElementById("leave-zone")
+
     const handleDrop = (event: DragEvent) => {
       event.preventDefault()
       const files = Array.from(event.dataTransfer?.files || [])
       if (files.length > 0 && files.length < 11) {
         onDrop(files)
+        setOnDragOver(false)
+        setFiles()
       } else {
         toast.error("Exceeded maximum files limit (10 files)", {
           duration: 3000,
@@ -141,44 +146,48 @@ export const UploadZone = () => {
       }
     }
 
-    const dropArea = document.getElementById("drop-zone")
-
     const handleDragOver = (event: DragEvent) => {
       event.preventDefault()
+    }
+    const handleDragEnter = () => {
       setOnDragOver(true)
     }
-    const handleDragLeave = (event: DragEvent) => {
-      // event.preventDefault()
+    const handleDragLeave = () => {
       setOnDragOver(false)
     }
 
     dropArea?.addEventListener("drop", handleDrop)
     dropArea?.addEventListener("dragover", handleDragOver)
-    dropArea?.addEventListener("dragleave", handleDragLeave)
+    dropArea?.addEventListener("dragenter", handleDragEnter)
+    leaveArea?.addEventListener("dragleave", handleDragLeave)
 
     return () => {
       dropArea?.removeEventListener("drop", handleDrop)
       dropArea?.removeEventListener("dragover", handleDragOver)
-      dropArea?.removeEventListener("dragleave", handleDragLeave)
+      dropArea?.removeEventListener("dragenter", handleDragEnter)
+      leaveArea?.removeEventListener("dragleave", handleDragLeave)
       // setOnDragOver(false)
     }
-  }, [onDrop])
+  }, [onDrop, setFiles])
 
   return (
     <>
       <div
+        id='leave-zone'
         className={cn(
-          "fixed left-0 top-0 bg-white/50 w-[100vw] h-[100vh] flex items-center justify-center p-20",
+          "fixed left-0 top-0 bg-black/50 w-[100vw] h-[100vh] flex items-center justify-center p-20",
           onDragOver ? "backdrop-blur-md" : "hidden"
         )}>
-        <div className='rounded border-dashed'>Drop Files</div>
+        <div className='rounded border-dashed border-4 border-zinc-200 p-40 pointer-events-none'>
+          Drop Files
+        </div>
       </div>
       <div
-        // {...getRootProps()}
+        {...getRootProps()}
         className='z-50 w-40 h-20 flex flex-col justify-center items-center border-2 border-dashed text-zinc-800 bg-gray-100 rounded bg-opacity-50 cursor-pointer group hover:bg-opacity-90 duration-200 uppercase'>
         <div className='flex-auto text-center text-md '>Drop Files</div>
         <div>
-          {/* <input {...getInputProps()} /> */}
+          <input {...getInputProps()} />
           <svg
             className='w-8 h-8 mx-auto rotate-45 text-blue-500 group-hover:rotate-[135deg] group-hover:text-lime-500 duration-200'
             fill='currentColor'

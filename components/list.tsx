@@ -5,6 +5,7 @@ import { toast } from "sonner"
 import { Item } from "./item"
 import { DeleteButton } from "./deleteButton"
 import { useAppStore } from "@/lib/store" // Import the store
+// import Link from "next/link"
 
 export const List = () => {
   const {
@@ -30,8 +31,10 @@ export const List = () => {
   return (
     <>
       {!userToken && (
-        <div className='fixed w-full h-full flex items-center justify-center'>
-          Please use a valid token.
+        <div className='fixed w-full h-full flex flex-col items-center justify-center'>
+          <p>Please use a valid token. <br />
+          If this is the first time you using this app and you are in the list of ALLOWED_USERS. <br />
+         You should generate your token from: </p>http(s)://your_api.address/user/[your_user_id]
         </div>
       )}
       {isLoading && (

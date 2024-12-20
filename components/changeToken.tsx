@@ -43,7 +43,7 @@ export const ChangeToken = () => {
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger className='p-2 bg-orange-700 rounded-md hover:bg-orange-300 hover:text-zinc-700 transition-colors'>
+      <AlertDialogTrigger className='p-2 mr-auto bg-orange-700 rounded-md hover:bg-orange-300 hover:text-zinc-700 transition-colors'>
         Change Token
       </AlertDialogTrigger>
       <AlertDialogContent>

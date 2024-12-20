@@ -12,15 +12,17 @@ import { toast } from "sonner"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { UploadZone } from "./uploadZone"
-import { UserDialog } from "./userDialog"
-import { Filters } from "./filters"
+import { UsageAndSettings } from "./usageAndSettings"
+// import { Filters } from "./filters"
 import { SearchBar } from "./search"
 import { AuthenticatedUserType } from "@/types"
+import { FileIcon } from "lucide-react"
+import { Separator } from "./ui/separator"
 
 const whisper = Whisper({ subsets: ["latin"], weight: "400" })
 
 export const Header = () => {
-  const { userToken, setUserToken, setUsage, setFiles } = useAppStore()
+  const { userToken, files, setUserToken, setUsage, setFiles } = useAppStore()
 
   const onAuthentication = async (token: string | undefined) => {
     const response = await checkAuth(token || "")
@@ -50,18 +52,24 @@ export const Header = () => {
       <div className='w-full h-20 right-0 top-0 fixed flex items-center z-10 bg-zinc-700/80 backdrop-blur-md'>
         {/* token section */}
         <div className='p-2 sm:w-80 h-20 flex flex-col items-baseline justify-between border-zinc-500 text-zinc-200'>
-          <div className='flex items-center text-sm'>
-            {!userToken?.user ? (
-              <>
-                <Label htmlFor='token'>Your Token</Label>
-                <div>
-                  @ <span className='ml-1 text-red-400'>Need valid token</span>
-                </div>
-              </>
-            ) : (
-              <UserDialog />
-            )}
-          </div>
+          {!userToken?.user ? (
+            <div className='flex flex-row items-center justify-between w-full'>
+              <Label htmlFor='token'>Your Token</Label>
+              <span className='ml-1 text-red-400 text-sm'>
+                Need valid token
+              </span>
+            </div>
+          ) : (
+            <div className='flex flex-row items-center justify-between w-full'>
+              <div className='truncate text-green-500 max-w-56'>
+                {userToken.user}
+              </div>
+              <div className='text-sm flex items-center'>
+                <FileIcon className='inline w-4 h-4' />
+                {files?.length} files
+              </div>
+            </div>
+          )}
           <div className='flex items-center'>
             <Input
               id='token'
@@ -73,14 +81,16 @@ export const Header = () => {
           </div>
         </div>
 
+        <Separator className='h-8 bg-zinc-500' orientation='vertical' />
+
         {/* upload section */}
         {userToken && (
           <div className='flex flex-row items-center'>
-            <UploadZone />
-            <div className='ml-1 flex flex-col items-center'>
+            <div className='flex flex-col items-start mr-1'>
               <SearchBar />
-              <Filters />
+              <UsageAndSettings />
             </div>
+            <UploadZone />
           </div>
         )}
 
