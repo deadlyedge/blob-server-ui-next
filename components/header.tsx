@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { useEffect } from "react"
 import { Whisper } from "next/font/google"
@@ -20,17 +20,18 @@ import { AuthenticatedUserType } from "@/types"
 const whisper = Whisper({ subsets: ["latin"], weight: "400" })
 
 export const Header = () => {
-  const { userToken, setUserToken, setUsage } = useAppStore()
+  const { userToken, setUserToken, setUsage, setFiles } = useAppStore()
 
   const onAuthentication = async (token: string | undefined) => {
-    try {
-      const response = await checkAuth(token || "")
-      setUserToken(response)
-      toast.info(`Welcome back, ${response.user}!`, { duration: 3000 })
-    } catch {
+    const response = await checkAuth(token || "")
+    if (!response) {
       toast.error("Invalid token. Please try again.", { duration: 3000 })
       setUserToken(null)
+    } else {
+      setUserToken(response)
+      toast.info(`Welcome back, ${response.user}!`, { duration: 3000 })
     }
+    setFiles()
   }
   const debouncedOnAuthentication = debounce(onAuthentication, 700)
 

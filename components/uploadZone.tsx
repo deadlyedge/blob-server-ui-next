@@ -1,15 +1,16 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useTransition } from "react"
+import { useCallback, useEffect, useRef, useState, useTransition } from "react"
 import axios from "axios"
 import { useDropzone } from "react-dropzone"
 import { toast } from "sonner"
 import { LoaderIcon } from "lucide-react"
-import { logger } from "@/lib/utils"
+import { cn, logger } from "@/lib/utils"
 import { useAppStore } from "@/lib/store" // Import the store
 
 export const UploadZone = () => {
   const [isPending, startTransition] = useTransition()
+  const [onDragOver, setOnDragOver] = useState(false)
   const { userToken, setFiles } = useAppStore() // Use the store
   const ws = useRef<WebSocket>(null)
 
@@ -119,43 +120,65 @@ export const UploadZone = () => {
     [userToken, setFiles]
   )
 
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    // noClick: true, // Prevent click to open file dialog
-    maxFiles: 5,
-    maxSize: 1024 * 1024 * 100, // 100MB limit
-  })
+  // const { getRootProps, getInputProps } = useDropzone({
+  //   // onDrop,
+  //   // noClick: true, // Prevent click to open file dialog
+  //   // preventDropOnDocument: false,
+  //   maxFiles: 5,
+  //   maxSize: 1024 * 1024 * 100, // 100MB limit
+  // })
 
   useEffect(() => {
     const handleDrop = (event: DragEvent) => {
       event.preventDefault()
       const files = Array.from(event.dataTransfer?.files || [])
-      if (files.length > 0) {
+      if (files.length > 0 && files.length < 11) {
         onDrop(files)
+      } else {
+        toast.error("Exceeded maximum files limit (10 files)", {
+          duration: 3000,
+        }) // 10 files
       }
     }
 
+    const dropArea = document.getElementById("drop-zone")
+
     const handleDragOver = (event: DragEvent) => {
       event.preventDefault()
+      setOnDragOver(true)
+    }
+    const handleDragLeave = (event: DragEvent) => {
+      // event.preventDefault()
+      setOnDragOver(false)
     }
 
-    window.addEventListener("drop", handleDrop)
-    window.addEventListener("dragover", handleDragOver)
+    dropArea?.addEventListener("drop", handleDrop)
+    dropArea?.addEventListener("dragover", handleDragOver)
+    dropArea?.addEventListener("dragleave", handleDragLeave)
 
     return () => {
-      window.removeEventListener("drop", handleDrop)
-      window.removeEventListener("dragover", handleDragOver)
+      dropArea?.removeEventListener("drop", handleDrop)
+      dropArea?.removeEventListener("dragover", handleDragOver)
+      dropArea?.removeEventListener("dragleave", handleDragLeave)
+      // setOnDragOver(false)
     }
   }, [onDrop])
 
   return (
     <>
       <div
-        {...getRootProps()}
+        className={cn(
+          "fixed left-0 top-0 bg-white/50 w-[100vw] h-[100vh] flex items-center justify-center p-20",
+          onDragOver ? "backdrop-blur-md" : "hidden"
+        )}>
+        <div className='rounded border-dashed'>Drop Files</div>
+      </div>
+      <div
+        // {...getRootProps()}
         className='z-50 w-40 h-20 flex flex-col justify-center items-center border-2 border-dashed text-zinc-800 bg-gray-100 rounded bg-opacity-50 cursor-pointer group hover:bg-opacity-90 duration-200 uppercase'>
-        <div className='flex-auto text-center text-lg '>Drop Files Here</div>
+        <div className='flex-auto text-center text-md '>Drop Files</div>
         <div>
-          <input {...getInputProps()} />
+          {/* <input {...getInputProps()} /> */}
           <svg
             className='w-8 h-8 mx-auto rotate-45 text-blue-500 group-hover:rotate-[135deg] group-hover:text-lime-500 duration-200'
             fill='currentColor'
@@ -164,7 +187,7 @@ export const UploadZone = () => {
             <path d='M13.41 12l4.3-4.29a1 1 0 1 0-1.42-1.42L12 10.59l-4.29-4.3a1 1 0 0 0-1.42 1.42l4.3 4.29-4.3 4.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l4.29-4.3 4.29 4.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z'></path>
           </svg>
         </div>
-        <div className='text-sm'>click to select</div>
+        <div className='text-sm'>Into Window</div>
       </div>
       {isPending && (
         <div className='fixed w-full h-full flex justify-center items-center bg-black/50'>

@@ -1,6 +1,6 @@
 "use server"
 
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import { logger } from "@/lib/utils"
 import { AuthenticatedUserType, FileInfoType, UserUsageType } from "@/types"
 
@@ -28,17 +28,18 @@ export const changeToken = async ({
 
 export const checkAuth = async (
   token: string
-): Promise<AuthenticatedUserType> => {
+): Promise<AuthenticatedUserType | undefined> => {
   try {
     const { data } = await axios.get(`${apiBaseUrl}/auth`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     return data
   } catch (error) {
-    if (error instanceof Error && error.message.endsWith("401")) {
-      throw new Error("token not valid") // token not valid
+    if (error instanceof AxiosError && error.status === 401) {
+      logger("token not valid") // token not valid
+    } else {
+      throw new Error("api server error") // other errors
     }
-    throw new Error("api server error") // other errors
   }
 }
 
