@@ -52,7 +52,7 @@ export const POST = async (req: Request) => {
     // Send the complete file to the user's API
     try {
       const response = await axios.post(
-        `${apiBaseUrl}/batch_upload`,
+        `${apiBaseUrl}/upload_batch`,
         formDataToSend,
         {
           headers: {
