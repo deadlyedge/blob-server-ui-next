@@ -24,9 +24,13 @@ import { RadioGroup, RadioGroupItem } from "./ui/radio-group"
 import { Label } from "@radix-ui/react-label"
 
 export const UsageAndSettings = () => {
-  const { files, userToken, usage } = useAppStore()
+  const { files, userToken, usage, uploadSwitch, setUploadSwitch } =
+    useAppStore()
 
   if (!userToken) return null
+  const onUploadSwitchChange = (value: "socket" | "tus" | "form") => {
+    setUploadSwitch(value)
+  }
   return (
     <Dialog>
       <DialogTrigger className='p-1 rounded-md flex items-center gap-x-2 w-full hover:bg-zinc-700/10 dark:hover:bg-zinc-700/50 transition'>
@@ -97,24 +101,33 @@ export const UsageAndSettings = () => {
           the download date will be updated.
         </div>
         <h5>Upload Function Select:</h5>
-        <RadioGroup defaultValue='websocket' className="text-sm ml-4">
+        <RadioGroup
+          defaultValue={uploadSwitch}
+          className='text-sm ml-4'
+          onValueChange={onUploadSwitchChange}>
           <div className='flex items-center space-x-2'>
-            <RadioGroupItem value='websocket' id='r1' />
+            <RadioGroupItem value='socket' id='r1' />
             <Label htmlFor='r1'>websocket (default)</Label>
           </div>
           <div className='flex items-center space-x-2'>
-            <RadioGroupItem value='uppy' id='r2' />
-            <Label htmlFor='r2'>uppy (tus resumable uploads)</Label>
+            <RadioGroupItem value='tus' id='r2' />
+            <Label htmlFor='r2'>tus (resumable uploads)</Label>
           </div>
           <div className='flex items-center space-x-2'>
             <RadioGroupItem value='form' id='r3' />
             <Label htmlFor='r3'>form/multipart (normal)</Label>
           </div>
         </RadioGroup>
-        <div className='text-xs text-zinc-400'>this is only for testing, websocket transfer is fastest in my network condition, but if you want to use the storage api in your own project, maybe here is a good place to try different functions.</div>
+        <div className='text-xs text-zinc-400'>
+          this is only for testing, websocket transfer is fastest in my network
+          condition, but if you want to use the storage api in your own project,
+          maybe here is a good place to try different functions.
+        </div>
         <DialogFooter>
           <ChangeToken />
-          <DialogClose className="p-2 rounded-md bg-slate-500 hover:bg-slate-700">Close</DialogClose>
+          <DialogClose className='p-2 rounded-md bg-slate-500 hover:bg-slate-700'>
+            Close
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

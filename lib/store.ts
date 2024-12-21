@@ -4,13 +4,13 @@ import { getCookie, setCookie, removeCookie } from "typescript-cookie"
 import { getUsage, listFiles, deleteFiles } from "@/actions"
 import { AuthenticatedUserType, FileInfoType, UserUsageType } from "@/types"
 
-type StateStorageType = {
+type CookieStorageType = {
   getItem: () => AuthenticatedUserType | null
   setItem: (userToken: AuthenticatedUserType) => void
   removeItem: () => void
 }
 
-export const cookiesStorage: StateStorageType = {
+export const cookiesStorage: CookieStorageType = {
   getItem: () => {
     const userToken = {
       user: getCookie("user"),
@@ -36,9 +36,11 @@ type AppState = {
   files: FileInfoType[] | null
   selectedFileIds: string[]
   isLoading: boolean
+  uploadSwitch: "socket" | "form" | "tus"
   setFiles: () => Promise<void>
   setUserToken: (userToken: AuthenticatedUserType | null) => void
   setUsage: () => Promise<void>
+  setUploadSwitch: (uploadSwitch: "socket" | "form" | "tus") => void
   onSelect: (fileId: string) => void
   handleDelete: () => Promise<void>
 }
@@ -49,6 +51,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   files: null,
   selectedFileIds: [],
   isLoading: false,
+  uploadSwitch: "socket",
   setFiles: async () => {
     set({ isLoading: true })
     const files = await listFiles(get().userToken?.token || "")
@@ -70,6 +73,10 @@ export const useAppStore = create<AppState>((set, get) => ({
       cookiesStorage.setItem(userToken)
       set({ userToken })
     }
+  },
+  setUploadSwitch(uploadSwitch) {
+    set({ uploadSwitch })
+    console.log('upload switched to: ',uploadSwitch)
   },
   onSelect: (fileId: string) => {
     const { selectedFileIds } = get()

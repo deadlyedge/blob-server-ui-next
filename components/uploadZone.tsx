@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, useTransition } from "react"
 import axios from "axios"
+import * as tus from "tus-js-client"
 import { useDropzone } from "react-dropzone"
 import { toast } from "sonner"
 import { LoaderIcon } from "lucide-react"
@@ -11,10 +12,11 @@ import { useAppStore } from "@/lib/store" // Import the store
 export const UploadZone = () => {
   const [isPending, startTransition] = useTransition()
   const [onDragOver, setOnDragOver] = useState(false)
-  const { userToken, setFiles } = useAppStore() // Use the store
+  const { userToken, setFiles, uploadSwitch } = useAppStore() // Use the store
   const ws = useRef<WebSocket>(null)
 
   useEffect(() => {
+    if (uploadSwitch !== "socket") return
     // Establish WebSocket connection
     const socket = new WebSocket(
       `wss://${process.env.NEXT_PUBLIC_API_BASE_DOMAIN as string}/upload_socket`
@@ -49,13 +51,17 @@ export const UploadZone = () => {
       // Close WebSocket connection on unmount
       socket.close()
     }
-  }, [userToken, setFiles])
+  }, [userToken, setFiles, uploadSwitch])
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       if (!userToken?.token) return null
       startTransition(async () => {
-        if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+        if (
+          uploadSwitch === "socket" &&
+          ws.current &&
+          ws.current.readyState === WebSocket.OPEN
+        ) {
           for (const file of acceptedFiles) {
             const fileReader = new FileReader()
             fileReader.onload = () => {
@@ -65,6 +71,32 @@ export const UploadZone = () => {
               console.log("File sending to WebSocket")
             }
             fileReader.readAsArrayBuffer(file) // Read the file as an ArrayBuffer
+          }
+        } else if (uploadSwitch === "tus") {
+          for (const file of acceptedFiles) {
+            const upload = new tus.Upload(file, {
+              endpoint: `https://${
+                process.env.NEXT_PUBLIC_API_BASE_DOMAIN as string
+              }/upload_tus`,
+              headers: {
+                Authorization: `Bearer ${userToken.token}`,
+              },
+              retryDelays: [0, 3000, 5000, 10000, 20000],
+              metadata: {
+                filename: file.name,
+                filetype: file.type,
+                name: file.name,
+                type: file.type,
+              },
+              onError: function (error) {
+                console.log("Failed because: " + error)
+              },
+              onSuccess: () => {
+                toast.success(`file: ${file.name} uploaded by tus`)
+                setFiles()
+              },
+            })
+            upload.start()
           }
         } else {
           // Fallback to the previous method if WebSocket is not available
@@ -76,12 +108,16 @@ export const UploadZone = () => {
             process.env.NEXT_PUBLIC_API_BASE_DOMAIN as string
           }/upload_batch`
 
-          await axios.post(endpoint, batchFiles)
+          await axios.post(endpoint, batchFiles, {
+            headers: {
+              Authorization: `Bearer ${userToken.token}`,
+            },
+          })
           setFiles()
         }
       })
     },
-    [userToken, setFiles]
+    [userToken, setFiles, uploadSwitch]
   )
 
   const { getRootProps, getInputProps } = useDropzone({
