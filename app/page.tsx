@@ -4,7 +4,7 @@ import { List } from "@/components/list"
 
 export default function Home() {
   return (
-    <main id="drop-zone" className='w-full h-full'>
+    <main className='w-full h-full'>
       <Header />
       <List />
       <Footer />

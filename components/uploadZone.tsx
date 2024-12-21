@@ -17,7 +17,7 @@ export const UploadZone = () => {
   useEffect(() => {
     // Establish WebSocket connection
     const socket = new WebSocket(
-      process.env.NEXT_PUBLIC_SOCKET_ENDPOINT as string
+      `wss://${process.env.NEXT_PUBLIC_API_BASE_DOMAIN as string}/upload_socket`
     )
 
     socket.onopen = () => {
@@ -72,7 +72,11 @@ export const UploadZone = () => {
           acceptedFiles.forEach((file) => batchFiles.append("files", file))
           batchFiles.append("token", userToken.token)
 
-          await axios.post("/api/upload", batchFiles)
+          const endpoint = `https://${
+            process.env.NEXT_PUBLIC_API_BASE_DOMAIN as string
+          }/upload_batch`
+
+          await axios.post(endpoint, batchFiles)
           setFiles()
         }
       })
@@ -82,13 +86,12 @@ export const UploadZone = () => {
 
   const { getRootProps, getInputProps } = useDropzone({
     // onDrop,
-    // preventDropOnDocument: false,
     maxFiles: 5,
     maxSize: 1024 * 1024 * 100, // 100MB limit
   })
 
   useEffect(() => {
-    const dropArea = document.getElementById("drop-zone")
+    const dropArea = document.body
     const leaveArea = document.getElementById("leave-zone")
 
     const handleDrop = (event: DragEvent) => {
