@@ -1,3 +1,17 @@
+// import { Upload as TusUpload } from "tus-js-client"
+
+// declare module "tus-js-client" {
+//   export class UploadWithBuffer extends TusUpload {
+//     // Override: Added Buffer type
+//     constructor(
+//       file: File | Buffer | Blob | Pick<ReadableStreamDefaultReader, "read">,
+//       options: UploadOptions
+//     )
+//     // Override: Added Buffer type
+//     file: File | Buffer | Blob | Pick<ReadableStreamDefaultReader, "read">
+//   }
+// }
+
 export type FileInfoType = {
   file_size: number
   download_times: number

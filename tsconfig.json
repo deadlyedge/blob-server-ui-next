@@ -20,8 +20,10 @@
     ],
     "paths": {
       "@/*": ["./*"]
+      // "tus-js-client": ["./types/tus-js-client.d.ts"]
     },
-    "types": ["jest"]
+    "types": ["jest"],
+    "typeRoots": ["./node_modules/@types", "./types"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
