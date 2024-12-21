@@ -77,7 +77,7 @@ export const UploadZone = () => {
             const upload = new tus.Upload(file, {
               endpoint: `https://${
                 process.env.NEXT_PUBLIC_API_BASE_DOMAIN as string
-              }/upload_tus`,
+              }/upload_tus/`,
               headers: {
                 Authorization: `Bearer ${userToken.token}`,
               },
