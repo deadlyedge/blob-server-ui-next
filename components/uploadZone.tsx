@@ -8,6 +8,10 @@ import { LoaderIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAppStore } from "@/lib/store" // Import the store
 
+// Constants in develepment or production
+const apiBase = process.env.NEXT_PUBLIC_API_BASE_DOMAIN as string
+const protocolSurfix = apiBase.startsWith("localhost") ? "" : "s"
+
 export const UploadZone = () => {
   const [isPending, startTransition] = useTransition()
   const [onDragOver, setOnDragOver] = useState(false)
@@ -18,7 +22,7 @@ export const UploadZone = () => {
     if (uploadSwitch !== "socket") return
     // Establish WebSocket connection
     const socket = new WebSocket(
-      `wss://${process.env.NEXT_PUBLIC_API_BASE_DOMAIN as string}/upload_socket`
+      `ws${protocolSurfix}://${apiBase}/upload_socket`
     )
 
     socket.onopen = () => {
@@ -75,9 +79,7 @@ export const UploadZone = () => {
           for (const file of acceptedFiles) {
             // Send the complete file to the user's API
             const upload = new Upload(file, {
-              endpoint: `https://${
-                process.env.NEXT_PUBLIC_API_BASE_DOMAIN as string
-              }/upload_tus/`, // remember the trailing slash, tus asked.
+              endpoint: `http${protocolSurfix}://${apiBase}/upload_tus/`, // remember the trailing slash, tus asked.
               headers: {
                 Authorization: `Bearer ${userToken.token}`,
               },
@@ -105,9 +107,7 @@ export const UploadZone = () => {
           acceptedFiles.forEach((file) => batchFiles.append("files", file))
           batchFiles.append("token", userToken.token)
 
-          const endpoint = `https://${
-            process.env.NEXT_PUBLIC_API_BASE_DOMAIN as string
-          }/upload_batch`
+          const endpoint = `http${protocolSurfix}://${apiBase}/upload_batch`
 
           await axios.post(endpoint, batchFiles, {
             headers: {
@@ -178,7 +178,7 @@ export const UploadZone = () => {
       <div
         className='z-50 w-28 h-20 flex flex-col justify-center items-center border-2 border-dashed text-zinc-800 bg-gray-100 rounded bg-opacity-50 cursor-pointer group hover:bg-opacity-90 duration-200 uppercase'
         onClick={() => document.getElementById("file-input")?.click()}>
-        <div className='flex-auto text-center text-md '>Add Files</div>
+        <div className='flex-auto text-center text-md'>Add Files</div>
         <div>
           <input
             id='file-input'

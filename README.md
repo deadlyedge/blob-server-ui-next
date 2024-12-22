@@ -38,10 +38,10 @@ then you can use this UI to manage your files.
 - ~~read user info~~
 - ~~change token~~
 - ~~upload file (batch)~~
-- first time visit get token? for now, you must use an api GET @ your.domain/checkUser
+- first time visit get token? for now, you must use an api GET @ your.domain/user/<your_valid_user_id> from browser
 - ~~use zustand to manage cookies~~
-- kill CORS errors
-- put upload switch into cookies
+- ~~kill CORS errors~~ ...by modify my api server of course...
+- ~~put upload switch into cookies~~
 - add correct response info
 
 # tips
@@ -52,6 +52,7 @@ for security reason, token should be hidden like password, but I just show it fo
 
 just fork this repo and use vercel to deploy. with this env setting:
 
-```
+```env
 API_BASE_URL='https://your-pyblobserver.deploy.site'
+NEXT_PUBLIC_API_BASE_DOMAIN='your-pyblobserver.deploy.site'
 ```
