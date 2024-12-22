@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState, useTransition } from "react"
 import axios from "axios"
 import { Upload } from "tus-js-client"
-import { useDropzone } from "react-dropzone"
 import { toast } from "sonner"
 import { LoaderIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -122,13 +121,6 @@ export const UploadZone = () => {
     [userToken, setFiles, uploadSwitch]
   )
 
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    noDrag: true,
-    maxFiles: 5,
-    maxSize: 1024 * 1024 * 100, // 100MB limit
-  })
-
   useEffect(() => {
     const dropArea = document.body
     const leaveArea = document.getElementById("leave-zone")
@@ -184,11 +176,23 @@ export const UploadZone = () => {
         </div>
       </div>
       <div
-        {...getRootProps()}
-        className='z-50 w-40 h-20 flex flex-col justify-center items-center border-2 border-dashed text-zinc-800 bg-gray-100 rounded bg-opacity-50 cursor-pointer group hover:bg-opacity-90 duration-200 uppercase'>
-        <div className='flex-auto text-center text-md '>Drop Files</div>
+        className='z-50 w-28 h-20 flex flex-col justify-center items-center border-2 border-dashed text-zinc-800 bg-gray-100 rounded bg-opacity-50 cursor-pointer group hover:bg-opacity-90 duration-200 uppercase'
+        onClick={() => document.getElementById("file-input")?.click()}>
+        <div className='flex-auto text-center text-md '>Add Files</div>
         <div>
-          <input {...getInputProps()} />
+          <input
+            id='file-input'
+            type='file'
+            onChange={(event) => {
+              const files = event.target.files
+              if (files) {
+                onDrop(Array.from(files))
+              }
+            }}
+            style={{ display: "none" }}
+            multiple
+            accept='*/*' // Adjust as needed to restrict file types
+          />
           <svg
             className='w-8 h-8 mx-auto rotate-45 text-blue-500 group-hover:rotate-[135deg] group-hover:text-lime-500 duration-200'
             fill='currentColor'
@@ -197,7 +201,7 @@ export const UploadZone = () => {
             <path d='M13.41 12l4.3-4.29a1 1 0 1 0-1.42-1.42L12 10.59l-4.29-4.3a1 1 0 0 0-1.42 1.42l4.3 4.29-4.3 4.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l4.29-4.3 4.29 4.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z'></path>
           </svg>
         </div>
-        <div className='text-sm'>Into Window</div>
+        <div className='text-sm'>or drop in</div>
       </div>
       {isPending && (
         <div className='fixed w-full h-full flex justify-center items-center bg-black/50'>
