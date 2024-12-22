@@ -40,6 +40,8 @@ then you can use this UI to manage your files.
 - ~~upload file (batch)~~
 - first time visit get token? for now, you must use an api GET @ your.domain/checkUser
 - ~~use zustand to manage cookies~~
+- kill CORS errors
+- put upload switch into cookies
 
 # tips
 

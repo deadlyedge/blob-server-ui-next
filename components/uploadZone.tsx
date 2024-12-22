@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, useTransition } from "react"
 import axios from "axios"
+import { Upload } from "tus-js-client"
 import { useDropzone } from "react-dropzone"
 import { toast } from "sonner"
 import { LoaderIcon } from "lucide-react"
@@ -74,37 +75,37 @@ export const UploadZone = () => {
         } else if (uploadSwitch === "tus") {
           for (const file of acceptedFiles) {
             // Send the complete file to the user's API
-            // const upload = new tus.Upload(file, {
-            //   endpoint: "https://f.zick.xyz/upload_tus/",
-            //   headers: {
-            //     Authorization: `Bearer ${userToken.token}`,
-            //   },
-            //   retryDelays: [0, 3000, 5000, 10000, 20000],
-            //   metadata: {
-            //     filename: file.name,
-            //     filetype: file.type,
-            //     name: file.name,
-            //     type: file.type,
-            //   },
-            //   // chunkSize: 5 * 1024 * 1024, // 5MB per chunk
-            //   onError: function (error) {
-            //     console.log("Failed because: " + error)
-            //   },
-            //   onSuccess: () => {
-            //     toast.success(`file: ${file.name} uploaded by tus`)
-            //     setFiles()
-            //   },
-            // })
-            // upload.start()
-            const data = new FormData()
-            data.append("files", file as File)
-            data.append("token", userToken.token)
+            const upload = new Upload(file, {
+              endpoint: "https://f.zick.xyz/upload_tus/",
+              headers: {
+                Authorization: `Bearer ${userToken.token}`,
+              },
+              retryDelays: [0, 3000, 5000, 10000, 20000],
+              metadata: {
+                filename: file.name,
+                filetype: file.type,
+                name: file.name,
+                type: file.type,
+              },
+              // chunkSize: 5 * 1024 * 1024, // 5MB per chunk
+              onError: function (error) {
+                console.log("Failed because: " + error)
+              },
+              onSuccess: () => {
+                toast.success(`file: ${file.name} uploaded by tus`)
+                setFiles()
+              },
+            })
+            upload.start()
+            // const data = new FormData()
+            // data.append("files", file as File)
+            // data.append("token", userToken.token)
 
-            const response = await axios.post("/api/upload_tus", data)
-            if (response) {
-              toast.success(`file: ${file.name} uploaded by tus`)
-              setFiles()
-            }
+            // const response = await axios.post("/api/upload_tus", data)
+            // if (response) {
+            //   toast.success(`file: ${file.name} uploaded by tus`)
+            //   setFiles()
+            // }
           }
         } else {
           // Fallback to the previous method if WebSocket is not available
