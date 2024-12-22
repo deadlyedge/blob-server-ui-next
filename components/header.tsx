@@ -13,7 +13,6 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { UploadZone } from "./uploadZone"
 import { UsageAndSettings } from "./usageAndSettings"
-// import { Filters } from "./filters"
 import { SearchBar } from "./search"
 import { AuthenticatedUserType } from "@/types"
 import { FileIcon } from "lucide-react"
@@ -38,7 +37,8 @@ export const Header = () => {
   const debouncedOnAuthentication = debounce(onAuthentication, 700)
 
   useEffect(() => {
-    const initialUser: AuthenticatedUserType | null = cookiesStorage.getItem()
+    const initialUser: AuthenticatedUserType | null =
+      cookiesStorage.getUserTokenCookie()
     if (initialUser) setUserToken(initialUser)
   }, [setUserToken])
 

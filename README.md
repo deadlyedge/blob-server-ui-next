@@ -42,6 +42,7 @@ then you can use this UI to manage your files.
 - ~~use zustand to manage cookies~~
 - kill CORS errors
 - put upload switch into cookies
+- add correct response info
 
 # tips
 

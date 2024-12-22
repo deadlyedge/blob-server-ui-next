@@ -5,13 +5,17 @@ import { getUsage, listFiles, deleteFiles } from "@/actions"
 import { AuthenticatedUserType, FileInfoType, UserUsageType } from "@/types"
 
 type CookieStorageType = {
-  getItem: () => AuthenticatedUserType | null
-  setItem: (userToken: AuthenticatedUserType) => void
-  removeItem: () => void
+  getUserTokenCookie: () => AuthenticatedUserType | null
+  setUserTokenCookie: (userToken: AuthenticatedUserType) => void
+  removeUserTokenCookie: () => void
+  getUploadSwitchCookie: () => string | null
+  setUploadSwitchCookie: (switchName: string) => void
+  removeUploadSwitchCookie: () => void
 }
 
 export const cookiesStorage: CookieStorageType = {
-  getItem: () => {
+  getUserTokenCookie: () => {
+    if (typeof document === "undefined") return null // Fallback value
     const userToken = {
       user: getCookie("user"),
       token: getCookie("token"),
@@ -20,14 +24,21 @@ export const cookiesStorage: CookieStorageType = {
       ? (userToken as AuthenticatedUserType)
       : null
   },
-  setItem: (userToken) => {
+  setUserTokenCookie: (userToken) => {
     setCookie("user", userToken.user, { path: "/", expires: 100 })
     setCookie("token", userToken.token, { path: "/", expires: 100 })
   },
-  removeItem: () => {
+  removeUserTokenCookie: () => {
     removeCookie("user", { path: "/" })
     removeCookie("token", { path: "/" })
   },
+  getUploadSwitchCookie: () => {
+    if (typeof document === "undefined") return "socket" // Fallback value
+    return getCookie("uploadSwitch") ?? "socket"
+  },
+  setUploadSwitchCookie: (switchName) =>
+    setCookie("uploadSwitch", switchName, { path: "/", expires: 100 }),
+  removeUploadSwitchCookie: () => removeCookie("uploadSwitch", { path: "/" }),
 }
 
 type AppState = {
@@ -40,7 +51,7 @@ type AppState = {
   setFiles: () => Promise<void>
   setUserToken: (userToken: AuthenticatedUserType | null) => void
   setUsage: () => Promise<void>
-  setUploadSwitch: (uploadSwitch: "socket" | "form" | "tus") => void
+  setUploadSwitch: (uploadSwitch: AppState["uploadSwitch"]) => void
   onSelect: (fileId: string) => void
   handleDelete: () => Promise<void>
 }
@@ -51,7 +62,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   files: null,
   selectedFileIds: [],
   isLoading: false,
-  uploadSwitch: "socket",
+  uploadSwitch:
+    cookiesStorage.getUploadSwitchCookie() as AppState["uploadSwitch"],
   setFiles: async () => {
     set({ isLoading: true })
     const files = await listFiles(get().userToken?.token || "")
@@ -67,16 +79,17 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
   setUserToken: (userToken: AuthenticatedUserType | null) => {
     if (!userToken) {
-      cookiesStorage.removeItem()
+      cookiesStorage.removeUserTokenCookie()
       set({ userToken: null })
     } else {
-      cookiesStorage.setItem(userToken)
+      cookiesStorage.setUserTokenCookie(userToken)
       set({ userToken })
     }
   },
   setUploadSwitch(uploadSwitch) {
     set({ uploadSwitch })
-    console.log('upload switched to: ',uploadSwitch)
+    cookiesStorage.setUploadSwitchCookie(uploadSwitch)
+    console.log("upload switched to: ", uploadSwitch)
   },
   onSelect: (fileId: string) => {
     const { selectedFileIds } = get()

@@ -76,7 +76,9 @@ export const UploadZone = () => {
           for (const file of acceptedFiles) {
             // Send the complete file to the user's API
             const upload = new Upload(file, {
-              endpoint: "https://f.zick.xyz/upload_tus/",
+              endpoint: `https://${
+                process.env.NEXT_PUBLIC_API_BASE_DOMAIN as string
+              }/upload_tus/`, // remember the trailing slash, tus asked.
               headers: {
                 Authorization: `Bearer ${userToken.token}`,
               },
@@ -97,15 +99,6 @@ export const UploadZone = () => {
               },
             })
             upload.start()
-            // const data = new FormData()
-            // data.append("files", file as File)
-            // data.append("token", userToken.token)
-
-            // const response = await axios.post("/api/upload_tus", data)
-            // if (response) {
-            //   toast.success(`file: ${file.name} uploaded by tus`)
-            //   setFiles()
-            // }
           }
         } else {
           // Fallback to the previous method if WebSocket is not available
@@ -130,7 +123,8 @@ export const UploadZone = () => {
   )
 
   const { getRootProps, getInputProps } = useDropzone({
-    // onDrop,
+    onDrop,
+    noDrag: true,
     maxFiles: 5,
     maxSize: 1024 * 1024 * 100, // 100MB limit
   })
