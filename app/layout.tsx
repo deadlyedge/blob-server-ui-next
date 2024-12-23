@@ -3,6 +3,7 @@ import { Nunito } from "next/font/google"
 import "./globals.css"
 import { cn } from "@/lib/utils"
 import { Toaster } from "@/components/ui/sonner"
+import { MaskProvider } from "@/components/maskProvider"
 
 const nunito = Nunito({ subsets: ["latin"] })
 
@@ -19,6 +20,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={cn(nunito.className, "antialiased dark min-h-screen")}>
+        <MaskProvider />
         {children}
         <Toaster />
       </body>

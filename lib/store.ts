@@ -41,12 +41,29 @@ export const cookiesStorage: CookieStorageType = {
   removeUploadSwitchCookie: () => removeCookie("uploadSwitch", { path: "/" }),
 }
 
+type MaskStore = {
+  type: "upload" | "loading" | null
+  progress?: number
+  isOpen: boolean
+  onOpen: (type: "upload" | "loading" | null, progress?: number) => void
+  onClose: () => void
+}
+
+export const useMask = create<MaskStore>((set) => ({
+  type: null,
+  progress: 0,
+  isOpen: false,
+  onOpen: (type, progress) =>
+    set({ type, progress: progress || 0, isOpen: true }),
+  onClose: () => set({ type: null, isOpen: false }),
+}))
+
 type AppState = {
   userToken: AuthenticatedUserType | null
   usage: UserUsageType | null
   files: FileInfoType[] | null
   selectedFileIds: string[]
-  isLoading: boolean
+  isLoading?: boolean
   uploadSwitch: "socket" | "form" | "tus"
   setFiles: () => Promise<void>
   setUserToken: (userToken: AuthenticatedUserType | null) => void
@@ -61,14 +78,16 @@ export const useAppStore = create<AppState>((set, get) => ({
   usage: null,
   files: null,
   selectedFileIds: [],
-  isLoading: false,
+  // isLoading: false,
   uploadSwitch:
     cookiesStorage.getUploadSwitchCookie() as AppState["uploadSwitch"],
   setFiles: async () => {
-    set({ isLoading: true })
+    // set({ isLoading: true })
+    useMask.setState({ type: "loading", isOpen: true })
     const files = await listFiles(get().userToken?.token || "")
     set({ files })
-    set({ isLoading: false })
+    useMask.setState({ type: null, isOpen: false })
+    // set({ isLoading: false })
   },
   setUsage: async () => {
     const currentUserToken = get().userToken
@@ -103,7 +122,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   handleDelete: async () => {
     const { selectedFileIds, userToken, setFiles } = get()
     if (selectedFileIds.length > 0) {
-      set({ isLoading: true })
+      // set({ isLoading: true })
       try {
         await deleteFiles(selectedFileIds, userToken?.token || "")
         set({ selectedFileIds: [] })
@@ -111,7 +130,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       } catch (error) {
         console.error("Error deleting files:", error)
       } finally {
-        set({ isLoading: false })
+        // set({ isLoading: false })
       }
     }
   },

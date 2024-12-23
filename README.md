@@ -31,18 +31,20 @@ then you can use this UI to manage your files.
 
 # develop
 
-10 days, pyBlobServer with pydantic, fastapi, sqlalchemy, sqlite, peewee, tortoist, zustand, and react query, and lot more, without AI assistance, i can't image it.
+10 days, pyBlobServer with pydantic, fastapi, sqlalchemy, sqlite, peewee, tortoist, zustand, and react query, and lot more, without AI assistance, i can't imaging it.
 
 # todo
 
 - ~~read user info~~
 - ~~change token~~
 - ~~upload file (batch)~~
-- first time visit get token? for now, you must use an api GET @ your.domain/user/<your_valid_user_id> from browser
+- ~~first time visit get token?~~ for now, you must use an api GET @ your.domain/user/<your_valid_user_id> from browser
 - ~~use zustand to manage cookies~~
 - ~~kill CORS errors~~ ...by modify my api server of course...
 - ~~put upload switch into cookies~~
+- ~~add central suspense mask manager to store~~
 - add correct response info
+- ok, let's just take a break.
 
 # tips
 

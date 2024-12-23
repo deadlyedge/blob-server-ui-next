@@ -1,21 +1,28 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState, useTransition } from "react"
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  startTransition,
+  // useTransition,
+} from "react"
 import axios from "axios"
 import { Upload } from "tus-js-client"
 import { toast } from "sonner"
-import { LoaderIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useAppStore } from "@/lib/store" // Import the store
+import { useAppStore, useMask } from "@/lib/store" // Import the store
 
 // Constants in develepment or production
 const apiBase = process.env.NEXT_PUBLIC_API_BASE_DOMAIN as string
 const protocolSurfix = apiBase.startsWith("localhost") ? "" : "s"
 
 export const UploadZone = () => {
-  const [isPending, startTransition] = useTransition()
+  // const [isPending, startTransition] = useTransition()
   const [onDragOver, setOnDragOver] = useState(false)
   const { userToken, setFiles, uploadSwitch } = useAppStore() // Use the store
+  const { onOpen, onClose } = useMask()
   const ws = useRef<WebSocket>(null)
 
   useEffect(() => {
@@ -65,16 +72,19 @@ export const UploadZone = () => {
           ws.current &&
           ws.current.readyState === WebSocket.OPEN
         ) {
-          for (const file of acceptedFiles) {
+          for (const [index, file] of acceptedFiles.entries()) {
+            onOpen("upload", (index / acceptedFiles.length) * 100)
+
             const fileReader = new FileReader()
             fileReader.onload = () => {
               const fileBytes = fileReader.result as ArrayBuffer
               ws.current?.send(file.name)
               ws.current?.send(fileBytes)
-              console.log("File sending to WebSocket")
+              console.log(`${file.name} sending to WebSocket`)
             }
             fileReader.readAsArrayBuffer(file) // Read the file as an ArrayBuffer
           }
+          onClose() // close the mask after all files have been sent
         } else if (uploadSwitch === "tus") {
           for (const file of acceptedFiles) {
             // Send the complete file to the user's API
@@ -94,7 +104,12 @@ export const UploadZone = () => {
               onError: function (error) {
                 console.log("Failed because: " + error)
               },
+              onProgress(bytesSent, bytesTotal) {
+                const progress = (bytesSent / bytesTotal) * 100
+                onOpen("upload", progress)
+              },
               onSuccess: () => {
+                onClose()
                 toast.success(`file: ${file.name} uploaded by tus`)
                 setFiles()
               },
@@ -118,7 +133,7 @@ export const UploadZone = () => {
         }
       })
     },
-    [userToken, setFiles, uploadSwitch]
+    [userToken, setFiles, uploadSwitch, onClose, onOpen]
   )
 
   useEffect(() => {
@@ -203,11 +218,11 @@ export const UploadZone = () => {
         </div>
         <div className='text-sm'>or drop in</div>
       </div>
-      {isPending && (
+      {/* {isPending && (
         <div className='fixed w-full h-full flex justify-center items-center bg-black/50'>
           <LoaderIcon color='#2F80ED' className='animate-spin' />
         </div>
-      )}
+      )} */}
     </>
   )
 }

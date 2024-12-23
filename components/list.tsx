@@ -5,7 +5,8 @@ import { toast } from "sonner"
 import { Item } from "./item"
 import { DeleteButton } from "./deleteButton"
 import { useAppStore } from "@/lib/store" // Import the store
-// import Link from "next/link"
+
+const apiBase = process.env.NEXT_PUBLIC_API_BASE_DOMAIN
 
 export const List = () => {
   const {
@@ -13,7 +14,7 @@ export const List = () => {
     files,
     setFiles,
     selectedFileIds,
-    isLoading,
+    // isLoading,
     onSelect,
     handleDelete,
   } = useAppStore() // Use the store
@@ -32,16 +33,20 @@ export const List = () => {
     <>
       {!userToken && (
         <div className='fixed w-full h-full flex flex-col items-center justify-center'>
-          <p>Please use a valid token. <br />
-          If this is the first time you using this app and you are in the list of ALLOWED_USERS. <br />
-         You should generate your token from: </p>http(s)://your_api.address/user/[your_user_id]
+          <p>
+            Please use a valid token. <br />
+            If this is the first time you using this app and you are in the list
+            of ALLOWED_USERS. <br />
+            You should generate your token from:{" "}
+          </p>
+          <p>http(s)://{apiBase}/user/[your_user_id]</p>
         </div>
       )}
-      {isLoading && (
+      {/* {isLoading && (
         <div className='fixed w-full h-full z-30 bg-black/50 flex items-center justify-center '>
           Loading...
         </div>
-      )}
+      )} */}
       <div className='flex flex-wrap items-center justify-center relative sm:justify-start mt-[138px] sm:mt-20'>
         {files ? (
           files.map((file) => (
