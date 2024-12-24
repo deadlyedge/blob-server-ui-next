@@ -22,10 +22,10 @@ people can now do only thinking works, and left 80% for AI.  Pretty cool!
 
 you'd have your own pyBlobServer, and set `API_BASE_URL` to your server url.
 
-add an environment setting at `NEXT_PUBLIC_SOCKET_ENDPOINT=`, which should be
-just like your API*BASE_URL, but like this partern: `wss://your.api.address/upload`
+add an environment setting at `NEXT_PUBLIC_API_BASE_DOMAIN=`, which should be
+just like your `API_BASE_URL`, but only the domain part.
 this variable should be passed to client to enable point-to-point socket file transfer
-so it MUST start with NEXT_PUBLIC*
+so it MUST start with `NEXT_PUBLIC_`
 
 then you can use this UI to manage your files.
 
