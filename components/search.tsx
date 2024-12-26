@@ -49,14 +49,14 @@ export const SearchBar = () => {
 			<button
 				type="button"
 				onClick={() => setOpen(true)}
-				className="group/search-bar p-2 rounded-md flex items-center gap-x-2 w-full hover:bg-zinc-700/10 dark:hover:bg-zinc-700/50 transition">
-				<Search className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
-				<p className="font-semibold text-sm text-zinc-500 dark:text-zinc-400 group-hover/search-bar:text-zinc-600 dark:group-hover/search-bar:text-zinc-300 transition">
-					Name Seach
-				</p>
-				<kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground ml-auto">
-					<span className="text-xs">⌘</span>K
-				</kbd>
+				className="group/search-bar p-1 rounded-md flex items-center gap-x-2 w-full hover:bg-zinc-700/50 transition">
+				<div className="flex items-center text-sm text-zinc-400 group-hover/search-bar:text-zinc-300 transition">
+					<Search className="w-4 h-4 ml-1" />
+					<p className="font-semibold text-sm ml-2">Name Seach</p>
+					<kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground ml-auto">
+						<span className="text-xs">⌘</span>K
+					</kbd>
+				</div>
 			</button>
 			<CommandDialog open={open} onOpenChange={setOpen}>
 				<CommandInput placeholder="Search Your Files..." />

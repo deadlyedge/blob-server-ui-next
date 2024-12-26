@@ -47,7 +47,7 @@ export const Header = () => {
 	// }, [userToken])
 
 	return (
-		<nav className="w-full h-20 top-0 sticky flex items-center z-50 bg-zinc-700/80 backdrop-blur-md">
+		<nav className="w-full h-20 top-0 flex shrink-0 items-center z-50 bg-zinc-700/80 backdrop-blur-md">
 			{/* token section */}
 			<div className="p-2 sm:w-80 h-20 flex flex-col items-baseline justify-between border-zinc-500 text-zinc-200">
 				{!userToken?.user ? (

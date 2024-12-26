@@ -35,7 +35,7 @@ body {
 		--radius: 0.5rem;
 	}
 	.dark {
-		--background: 0 0% 3.9%;
+		--background: 15 0% 20%;
 		--foreground: 0 0% 98%;
 		--card: 0 0% 3.9%;
 		--card-foreground: 0 0% 98%;
@@ -78,16 +78,16 @@ body {
 
 /* Track */
 ::-webkit-scrollbar-track {
-	background: #666;
+	background: hsl(15, 0%, 20%);
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-	background: #888;
+	background: hsl(15, 0%, 40%);
 	border-radius: 5px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-	background: #555;
+	background: hsl(15, 0%, 60%);
 }
