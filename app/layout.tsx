@@ -10,6 +10,9 @@ const nunito = Nunito({ subsets: ["latin"] })
 export const metadata: Metadata = {
 	title: "pyBlobServer ui",
 	description: "born to serve pyBlobServer",
+	icons: {
+		apple: "/apple-touch-icon.png",
+	}
 }
 
 export default function RootLayout({
