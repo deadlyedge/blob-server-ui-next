@@ -38,7 +38,7 @@ then you can use this UI to manage your files.
 - ~~read user info~~
 - ~~change token~~
 - ~~upload file (batch)~~
-- ~~first time visit get token?~~ for now, you must use an api GET @ your.domain/user/<your_valid_user_id> from browser
+- ~~first time visit get token?~~ for now, you must use an api GET @ your.domain/user/<your_valid_user_id> or from browser
 - ~~use zustand to manage cookies~~
 - ~~kill CORS errors~~ ...by modify my api server of course...
 - ~~put upload switch into cookies~~

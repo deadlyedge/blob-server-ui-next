@@ -11,7 +11,7 @@ import {
 	CommandItem,
 	CommandList,
 } from "@/components/ui/command"
-import { DialogTitle } from "@/components/ui/dialog"
+import { DialogDescription, DialogTitle } from "@/components/ui/dialog"
 import { useAppStore } from "@/lib/store"
 import { formatBytes } from "@/lib/utils"
 
@@ -31,19 +31,14 @@ export const SearchBar = () => {
 		return () => document.removeEventListener("keydown", down)
 	}, [])
 
-	const onClick = (fileId: string) => {
+	const handleFileClick = (fileId: string) => {
+		const element = document.getElementById(fileId) as HTMLElement
+		if (element) {
+			element.scrollIntoView({ behavior: "smooth", block: "center" })
+		}
 		setOpen(false)
-
-		return scrollWidthOffset(document.getElementById(fileId) as HTMLElement)
 	}
 
-	const scrollWidthOffset = (element: HTMLElement) => {
-		// const menu = document.getElementById('menu')
-		window.scrollTo({
-			top: element.offsetTop - 360,
-			behavior: "smooth",
-		})
-	}
 	return (
 		<>
 			<button
@@ -52,7 +47,9 @@ export const SearchBar = () => {
 				className="group/search-bar p-1 rounded-md flex items-center gap-x-2 w-full hover:bg-zinc-700/50 transition">
 				<div className="flex items-center text-sm text-zinc-400 group-hover/search-bar:text-zinc-300 transition">
 					<Search className="w-4 h-4 ml-1" />
-					<p className="font-semibold text-sm mx-1 hidden sm:block">Name Seach</p>
+					<p className="font-semibold text-sm mx-1 hidden sm:block">
+						Name Seach
+					</p>
 					<kbd className="pointer-events-none sm:inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground ml-auto hidden">
 						<span className="text-xs">⌘</span>K
 					</kbd>
@@ -61,12 +58,15 @@ export const SearchBar = () => {
 			<CommandDialog open={open} onOpenChange={setOpen}>
 				<CommandInput placeholder="Search Your Files..." />
 				<DialogTitle className="hidden" />
+				<DialogDescription className="hidden" />
 				<CommandList>
 					<CommandEmpty>No Result</CommandEmpty>
 					<CommandGroup>
 						{files?.map(({ file_name, file_size, file_id }) => {
 							return (
-								<CommandItem key={file_id} onSelect={() => onClick(file_id)}>
+								<CommandItem
+									key={file_id}
+									onSelect={() => handleFileClick(file_id)}>
 									<div className="grid grid-cols-8 w-full">
 										<File className="col-span-1" />
 										<span className="col-span-6 truncate">{file_name}</span>

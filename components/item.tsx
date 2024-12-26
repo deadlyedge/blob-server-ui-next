@@ -63,6 +63,7 @@ export const Item = ({ file, selected, onSelect }: ItemProps) => {
 	return (
 		<Suspense fallback={<Skeleton className="w-full h-full" />}>
 			<Card
+				id={file.file_id}
 				className={cn(
 					"ring-none shadow-md text-zinc-700 text-lg sm:text-xs m-2 p-2 w-full sm:w-72 hover:ring-blue-300 hover:ring-4",
 					selected ? "bg-zinc-400/50" : "bg-zinc-200",
