@@ -1,9 +1,9 @@
 "use client"
 
-import { useMask } from "@/lib/store"
-import { LoaderIcon } from "lucide-react"
 import { useEffect, useState } from "react"
-import { Progress } from "./ui/progress"
+import { LoaderIcon } from "lucide-react"
+import { useMask } from "@/lib/store"
+import { Progress } from "@/components/ui/progress"
 
 export const MaskProvider = () => {
   const [isMounted, setIsMounted] = useState<boolean>(false)

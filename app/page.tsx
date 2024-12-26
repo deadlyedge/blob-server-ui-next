@@ -4,10 +4,12 @@ import { List } from "@/components/list"
 
 export default function Home() {
   return (
-    <main className='w-full h-full'>
+    <main className='h-[100vh] flex flex-col'>
       <Header />
+      <div className="overflow-y-auto -mt-20 pt-20">
       <List />
       <Footer />
+      </div>
     </main>
   )
 }

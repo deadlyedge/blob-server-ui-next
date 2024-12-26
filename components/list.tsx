@@ -47,7 +47,7 @@ export const List = () => {
           Loading...
         </div>
       )} */}
-      <div className='flex flex-wrap items-center justify-center relative sm:justify-start mt-[138px] sm:mt-20'>
+      <div className='flex flex-wrap items-center justify-center sm:justify-start'>
         {files ? (
           files.map((file) => (
             <Item

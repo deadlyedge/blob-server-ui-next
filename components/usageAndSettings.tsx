@@ -17,11 +17,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Label } from "@/components/ui/label"
 import { formatBytes } from "@/lib/utils"
 import { CircleEllipsis } from "lucide-react"
 import { useAppStore } from "@/lib/store"
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group"
-import { Label } from "@radix-ui/react-label"
 
 export const UsageAndSettings = () => {
   const { files, userToken, usage, uploadSwitch, setUploadSwitch } =

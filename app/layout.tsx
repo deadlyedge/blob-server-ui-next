@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body className={cn(nunito.className, "antialiased dark min-h-screen")}>
+      <body className={cn(nunito.className, "antialiased dark")}>
         <MaskProvider />
         {children}
         <Toaster />

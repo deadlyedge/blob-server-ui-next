@@ -47,9 +47,7 @@ export const Header = () => {
   }, [userToken, setUsage])
 
   return (
-    <>
-      {/* Main header container */}
-      <div className='w-full h-20 right-0 top-0 fixed flex items-center z-10 bg-zinc-700/80 backdrop-blur-md'>
+      <nav className='w-full h-20 top-0 sticky flex items-center z-50 bg-zinc-700/80 backdrop-blur-md'>
         {/* token section */}
         <div className='p-2 sm:w-80 h-20 flex flex-col items-baseline justify-between border-zinc-500 text-zinc-200'>
           {!userToken?.user ? (
@@ -98,9 +96,9 @@ export const Header = () => {
         <section
           className={cn(
             whisper.className,
-            "fixed text-gray-100 top-0 right-0"
+            "text-gray-100 ml-auto relative"
           )}>
-          <div className='h-20 w-36 right-0 top-0 fixed bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-opacity-20 blur z-20'></div>
+          <div className='h-20 w-36 right-0 top-0 bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-opacity-20 blur z-20'></div>
           <div className='absolute top-8 right-2 text-[1rem] mr-16 mt-2 -rotate-90 z-30'>
             python
           </div>
@@ -109,7 +107,6 @@ export const Header = () => {
             <div className='font-serif text-xl -mt-1 float-right'>NextUI</div>
           </div>
         </section>
-      </div>
-    </>
+      </nav>
   )
 }
