@@ -57,7 +57,7 @@ export const Header = () => {
 					</div>
 				) : (
 					<div className="flex flex-row items-center justify-between w-full">
-						<div className="truncate text-green-500 max-w-56">
+						<div className="truncate text-green-500 max-w-56 hidden sm:block">
 							{userToken.user}
 						</div>
 						<div className="text-sm flex items-center">
@@ -72,7 +72,7 @@ export const Header = () => {
 						onChange={(e) => debouncedOnAuthentication(e.target.value)}
 						defaultValue={userToken?.token}
 						placeholder="5209cf61-xxxx-xxxx-xxxx-600fe1105a9f"
-						className="w-40 sm:w-[300px] font-serif border-zinc-500 border-t-0 border-b-0"
+						className="w-32 sm:w-[300px] font-serif border-zinc-500 border-t-0 border-b-0"
 					/>
 				</div>
 			</div>

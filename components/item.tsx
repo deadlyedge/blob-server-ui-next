@@ -64,7 +64,7 @@ export const Item = ({ file, selected, onSelect }: ItemProps) => {
 		<Suspense fallback={<Skeleton className="w-full h-full" />}>
 			<Card
 				className={cn(
-					"outline-none shadow-md text-zinc-700 text-lg sm:text-xs m-2 p-2 w-full sm:w-72 hover:outline-blue-300 hover:outline-4 transition-all",
+					"ring-none shadow-md text-zinc-700 text-lg sm:text-xs m-2 p-2 w-full sm:w-72 hover:ring-blue-300 hover:ring-4",
 					selected ? "bg-zinc-400/50" : "bg-zinc-200",
 				)}>
 				<CardContent className="w-full aspect-square relative mb-1 flex justify-center items-center">
@@ -81,7 +81,7 @@ export const Item = ({ file, selected, onSelect }: ItemProps) => {
 						/>
 					)}
 				</CardContent>
-				<div>
+				<div className="w-[90vw] sm:w-full">
 					<p className="truncate">
 						Filename:
 						<code className="bg-zinc-200 px-1 rounded">

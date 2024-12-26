@@ -194,9 +194,12 @@ export const UploadZone = () => {
 				</div>
 			</div>
 			<div
-				className="z-50 w-28 h-20 flex flex-col justify-center items-center border-2 border-dashed text-zinc-800 bg-gray-100 rounded bg-opacity-50 cursor-pointer group hover:bg-opacity-90 duration-200 uppercase"
+				className="z-50 w-16 sm:w-28 h-20 flex flex-col justify-center items-center border-2 border-dashed text-zinc-800 bg-gray-100 rounded bg-opacity-50 cursor-pointer group hover:bg-opacity-90 duration-200 uppercase"
 				onClick={() => document.getElementById("file-input")?.click()}>
-				<div className="flex-auto text-center text-md">Add Files</div>
+				<div className="flex-auto text-center text-md hidden sm:block">
+					Add Files
+				</div>
+				<div className="flex-auto text-center text-md block sm:hidden">Add</div>
 				<div>
 					<input
 						id="file-input"
@@ -221,7 +224,8 @@ export const UploadZone = () => {
 						<path d="M13.41 12l4.3-4.29a1 1 0 1 0-1.42-1.42L12 10.59l-4.29-4.3a1 1 0 0 0-1.42 1.42l4.3 4.29-4.3 4.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l4.29-4.3 4.29 4.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z" />
 					</svg>
 				</div>
-				<div className="text-sm">or drop in</div>
+				<div className="text-sm hidden sm:block">or drop in</div>
+				<div className="text-sm block sm:hidden">file</div>
 			</div>
 			{/* {isPending && (
         <div className='fixed w-full h-full flex justify-center items-center bg-black/50'>

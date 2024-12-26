@@ -36,7 +36,7 @@ export const UsageAndSettings = () => {
 			<DialogTrigger className="group/usage p-1 rounded-md flex items-center gap-x-2 w-full hover:bg-zinc-700/50 transition">
 				<div className="flex items-center text-zinc-400 group-hover/usage:text-zinc-300">
 					<CircleEllipsis className="w-4 h-4 ml-1" />
-					<span className="ml-2 text-sm">Usage & Settings</span>
+					<span className="ml-1 text-sm hidden sm:block">Usage & Settings</span>
 				</div>
 			</DialogTrigger>
 			<DialogContent>
