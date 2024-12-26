@@ -3,13 +3,13 @@ import { Header } from "@/components/header"
 import { List } from "@/components/list"
 
 export default function Home() {
-  return (
-    <main className='h-[100vh] flex flex-col'>
-      <Header />
-      <div className="overflow-y-auto -mt-20 pt-20">
-      <List />
-      <Footer />
-      </div>
-    </main>
-  )
+	return (
+		<main className="h-[100vh] flex flex-col">
+			<Header />
+			<div className="overflow-y-auto -mt-20 pt-20">
+				<List />
+				<Footer />
+			</div>
+		</main>
+	)
 }
