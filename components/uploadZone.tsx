@@ -194,7 +194,7 @@ export const UploadZone = () => {
 				</div>
 			</div>
 			<div
-				className="z-50 w-16 sm:w-28 h-20 flex flex-col justify-center items-center border-2 border-dashed text-zinc-800 bg-gray-100 rounded bg-opacity-50 cursor-pointer group hover:bg-opacity-90 duration-200 uppercase"
+				className="z-50 w-16 sm:w-28 h-20 flex flex-col justify-center items-center border-2 border-dashed text-zinc-800 bg-gray-100/50 rounded cursor-pointer group hover:bg-gray-100/90 duration-200 uppercase"
 				onClick={() => document.getElementById("file-input")?.click()}>
 				<div className="flex-auto text-center text-md hidden sm:block">
 					Add Files

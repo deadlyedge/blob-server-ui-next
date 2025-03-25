@@ -89,7 +89,7 @@ export const Item = ({ file, selected, onSelect }: ItemProps) => {
 							{fileInfo.filename}
 						</code>
 					</p>
-					<p className="truncate rounded outline-none hover:outline-offset-1 hover:outline-2 hover:outline-orange-500 transition-all">
+					<p className="truncate rounded outline-2 hover:outline-offset-1 hover:outline-2 hover:outline-orange-500 transition-all">
 						URL:
 						<code
 							className={cn(
