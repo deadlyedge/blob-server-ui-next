@@ -21,7 +21,7 @@ export const Footer = () => {
 					<DrawerTitle>About This Project</DrawerTitle>
 					<DrawerDescription>This action cannot be undone.</DrawerDescription>
 				</DrawerHeader>
-				<div className="p-4 max-w-[50rem]">
+				<div className="p-4 max-w-200">
 					This is a simple UI for{" "}
 					<a href="https://github.com/deadlyedge/pyBlobServer">
 						pyBlobServer: https://github.com/deadlyedge/pyBlobServer
@@ -41,7 +41,7 @@ export const Footer = () => {
 					<br />
 					So here we are.
 				</div>
-				<div className="px-4 pb-4 text-zinc-300 text-sm max-w-[40rem]">
+				<div className="px-4 pb-4 text-zinc-300 text-sm max-w-160">
 					This project is not finished but very usable, just for some funciton
 					not finished yet. But I expect it will save your cost in the future
 					but it&apos;s all depends on the project you want to host.

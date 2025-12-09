@@ -186,7 +186,7 @@ export const UploadZone = () => {
 			<div
 				id="leave-zone"
 				className={cn(
-					"fixed left-0 top-0 bg-black/50 w-[100vw] h-[100vh] flex items-center justify-center p-20",
+					"fixed left-0 top-0 bg-black/50 w-screen h-screen flex items-center justify-center p-20",
 					onDragOver ? "backdrop-blur-md" : "hidden",
 				)}>
 				<div className="rounded border-dashed border-4 border-zinc-200 p-40 pointer-events-none">
@@ -217,7 +217,7 @@ export const UploadZone = () => {
 					<svg
 						role="img"
 						aria-label="plus"
-						className="w-8 h-8 mx-auto rotate-45 text-blue-500 group-hover:rotate-[135deg] group-hover:text-lime-500 duration-200"
+						className="w-8 h-8 mx-auto rotate-45 text-blue-500 group-hover:rotate-135 group-hover:text-lime-500 duration-200"
 						fill="currentColor"
 						viewBox="7 2 10 20"
 						xmlns="http://www.w3.org/2000/svg">

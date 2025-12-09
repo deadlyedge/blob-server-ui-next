@@ -4,7 +4,7 @@ import { List } from "@/components/list"
 
 export default function Home() {
 	return (
-		<main className="h-[100vh] flex flex-col">
+		<main className="h-screen flex flex-col">
 			<Header />
 			<div className="overflow-y-auto -mt-20 pt-20">
 				<List />

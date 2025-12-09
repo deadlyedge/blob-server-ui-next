@@ -93,7 +93,7 @@ export const Header = () => {
 			{/* Title section */}
 			<section
 				className={cn(whisper.className, "text-gray-100 ml-auto relative")}>
-				<div className="h-20 w-36 right-0 top-0 bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 blur z-20" />
+				<div className="h-20 w-36 right-0 top-0 bg-linear-to-r from-pink-500 via-red-500 to-yellow-500 blur z-20" />
 				<div className="absolute top-8 right-2 text-[1rem] mr-16 mt-2 -rotate-90 z-30">
 					python
 				</div>
