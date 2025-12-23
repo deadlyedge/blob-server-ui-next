@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Toggle } from "@/components/ui/toggle"
-import { cn, delay, formatBytes } from "@/lib/utils"
-import type { FileInfoType } from "@/types"
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Toggle } from '@/components/ui/toggle'
+import { cn, delay, formatBytes } from '@/lib/utils'
+import type { FileInfoType } from '@/types'
 import {
 	Download,
 	FileAudio,
@@ -14,11 +14,11 @@ import {
 	FileVideo,
 	ImageIcon,
 	Trash2,
-} from "lucide-react"
-import Image from "next/image"
-import { Suspense, useState } from "react"
-import { toast } from "sonner"
-import { Skeleton } from "./ui/skeleton"
+} from 'lucide-react'
+import Image from 'next/image'
+import { Suspense, useState } from 'react'
+import { toast } from 'sonner'
+import { Skeleton } from './ui/skeleton'
 
 type ItemProps = {
 	file: FileInfoType // Define your FileType
@@ -56,7 +56,7 @@ export const Item = ({ file, selected, onSelect }: ItemProps) => {
 	const copyText = (text: string) => {
 		navigator.clipboard.writeText(text)
 		setIsCopied(true)
-		toast("Link Copied", { description: text })
+		toast('Link Copied', { description: text })
 		delay(2000).then(() => setIsCopied(false))
 	}
 
@@ -65,9 +65,10 @@ export const Item = ({ file, selected, onSelect }: ItemProps) => {
 			<Card
 				id={file.file_id}
 				className={cn(
-					"ring-none shadow-md text-zinc-700 text-lg sm:text-xs m-2 p-2 w-full sm:w-72 hover:ring-blue-300 hover:ring-4",
-					selected ? "bg-zinc-400/50" : "bg-zinc-200",
-				)}>
+					'ring-none shadow-md text-zinc-700 text-lg sm:text-xs m-2 p-2 w-full sm:w-72 hover:ring-blue-300 hover:ring-4',
+					selected ? 'bg-zinc-400/50' : 'bg-zinc-200',
+				)}
+			>
 				<CardContent className="w-full aspect-square relative mb-1 flex justify-center items-center">
 					{/* Improved Icon rendering */}
 					{Icon !== ImageIcon ? (
@@ -76,8 +77,8 @@ export const Item = ({ file, selected, onSelect }: ItemProps) => {
 						<Image
 							src={fileInfo.imageUrl}
 							alt={fileInfo.filename}
-							fill
-							sizes="50vw"
+							width={200}
+							height={200}
 							className="object-contain"
 						/>
 					)}
@@ -91,23 +92,25 @@ export const Item = ({ file, selected, onSelect }: ItemProps) => {
 					</p>
 					<p className="truncate rounded outline-2 hover:outline-offset-1 hover:outline-2 hover:outline-orange-500 transition-all">
 						URL:
-						<code
+						<button
+							type="button"
 							className={cn(
-								"px-1 rounded",
-								isCopied ? "bg-emerald-300" : "bg-zinc-200",
+								'px-1 rounded border-none bg-transparent font-mono text-sm cursor-pointer',
+								isCopied ? 'bg-emerald-300' : 'bg-zinc-200',
 							)}
-							onClick={() => copyText(fileInfo.imageUrl)}>
+							onClick={() => copyText(fileInfo.imageUrl)}
+						>
 							{fileInfo.imageUrl}
-						</code>
+						</button>
 					</p>
 					<p>
-						Size:{" "}
+						Size:{' '}
 						<code className="bg-zinc-200 px-1 rounded">
 							{fileInfo.fileSize}
 						</code>
 					</p>
 					<p>
-						Uploaded:{" "}
+						Uploaded:{' '}
 						<code className="bg-zinc-200 px-1 rounded">
 							{fileInfo.days} days ago
 						</code>
@@ -123,7 +126,8 @@ export const Item = ({ file, selected, onSelect }: ItemProps) => {
 							className="hover:bg-red-200 data-[state=on]:bg-red-700"
 							id={file.file_id}
 							pressed={selected}
-							onPressedChange={() => onSelect(file.file_id)}>
+							onPressedChange={() => onSelect(file.file_id)}
+						>
 							<Trash2 className="w-4 h-4 text-red-300" />
 						</Toggle>
 					</div>

@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import { useAppStore } from "@/lib/store" // Import the store
-import { useEffect } from "react"
-import { toast } from "sonner"
-import { DeleteButton } from "./deleteButton"
-import { Item } from "./item"
+import { useAppStore } from '@/lib/store'; // Import the store
+import { useEffect } from 'react'
+import { toast } from 'sonner'
+import { DeleteButton } from './deleteButton'
+import { Item } from './item'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE_DOMAIN
 
@@ -37,16 +37,12 @@ export const List = () => {
 						Please use a valid token. <br />
 						If this is the first time you using this app and you are in the list
 						of ALLOWED_USERS. <br />
-						You should generate your token from:{" "}
+						You should generate your token from:{' '}
 					</p>
 					<p>http(s)://{apiBase}/user/[your_user_id]</p>
 				</div>
 			)}
-			{/* {isLoading && (
-        <div className='fixed w-full h-full z-30 bg-black/50 flex items-center justify-center '>
-          Loading...
-        </div>
-      )} */}
+			{/* <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"> */}
 			<div className="flex flex-wrap items-center justify-center sm:justify-start">
 				{files ? (
 					files.map((file) => (
